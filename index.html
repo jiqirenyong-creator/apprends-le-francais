@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>法语宗教词汇学习站</title>
+<style>
+:root{--bg:#f5f3ee;--card:#fff;--ink:#1f2328;--mute:#6b7280;--line:#e1ddd3;--acc:#7a4b8f;--accd:#f0e8f4;--ok:#2e7d32;--okbg:#e3f3e4;--bad:#c62828;--badbg:#fbe6e6;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15171a;--card:#1f2226;--ink:#eceae4;--mute:#9aa3a8;--line:#343a40;--acc:#c9a2dc;--accd:#32283a;--ok:#7bd37f;--okbg:#1f3a22;--bad:#ef8a8a;--badbg:#3f2222;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#15171a;--card:#1f2226;--ink:#eceae4;--mute:#9aa3a8;--line:#343a40;--acc:#c9a2dc;--accd:#32283a;--ok:#7bd37f;--okbg:#1f3a22;--bad:#ef8a8a;--badbg:#3f2222;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:620px;margin:0 auto;padding:20px 16px 40px}h1{font-size:1.45rem;margin:8px 0 4px}.sub{color:var(--mute);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.lv{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:9px;font:inherit;cursor:pointer}
+.lv:hover,.opt:hover:not(:disabled){border-color:var(--acc)}.lv b{font-size:1.15rem;color:var(--acc);margin-right:10px}.lv span{color:var(--mute);font-size:.88rem}
+.bar{display:flex;justify-content:space-between;font-size:.92rem;margin-bottom:8px;color:var(--mute)}
+.track{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:14px}.fill{height:100%;background:var(--acc)}
+.tag{display:inline-block;background:var(--accd);color:var(--acc);border-radius:6px;padding:1px 8px;font-size:.8rem;margin:0 6px 6px 0}
+.q{font-size:1.4rem;font-weight:600;margin:6px 0 16px;line-height:1.5}
+.opt{display:block;width:100%;text-align:left;background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:9px;font:inherit;cursor:pointer}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}.opt.bad{border-color:var(--bad);background:var(--badbg)}.opt:disabled{cursor:default}
+input.ans{width:100%;font:inherit;font-size:1.1rem;padding:11px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}input.ans:focus{outline:none;border-color:var(--acc)}
+.acc{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.acc button{background:var(--accd);color:var(--acc);border:0;border-radius:8px;padding:6px 11px;font:inherit;cursor:pointer}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--accd);font-size:.95rem}
+.btn{background:var(--acc);color:var(--bg);border:0;border-radius:10px;padding:11px 20px;font:inherit;font-weight:600;cursor:pointer;margin-top:12px}
+.btn.alt{background:transparent;color:var(--acc);border:1.5px solid var(--acc);margin-left:8px}
+.big{font-size:2.4rem;font-weight:700;color:var(--acc);margin:0}.hidden{display:none}small{color:var(--mute)}
+.row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}.row small{display:block;color:var(--mute)}.top{display:flex;gap:8px;margin-bottom:12px}.top input{flex:1}.foot{margin-top:24px;color:var(--mute);font-size:.85rem}</style>
+</head>
+<body>
+<div class="wrap">
+<h1>✝️ 法语宗教词汇学习站</h1>
+<p class="sub">中文 ⇄ 法语 · 选择题 + 拼写 · A1–C2 分级 · 标注阴阳性与单复数</p>
+<div id="home"></div><div id="play" class="hidden"></div><div id="end" class="hidden"></div><div id="list" class="hidden"></div>
+<p class="foot">把本页链接发给朋友即可一起学习；每个人的进度保存在各自的浏览器里。<br>带 * 的阴阳性由词形与冠词推断，请自行核对。级别由词长与结构自动估计，仅供参考。</p>
+</div>
+<script>
+const RAW=`神|Dieu|n
+耶和华|l’Éternel|n
+耶和华神|l’Éternel Dieu|n
+耶稣|Jésus|n
+主|le Seigneur|n
+主耶稣|(le) Seigneur Jésus|n
+主耶稣基督|(le) Seigneur Jésus-Christ|n
+全能神|Dieu Tout-Puissant|n
+全能者|le Tout-Puissant|n
+全能的神|(le) Dieu tout-puissant|p
+实际神|(le) Dieu concret|p
+圣灵|le Saint-Esprit|n
+那灵|l’Esprit|n
+神的灵|l’Esprit de Dieu|p
+人子|le Fils de l’homme|n
+造物主|le Créateur|n
+天父|le Père céleste|n
+父神|Dieu le Père|n
+律法时代|l’ère de la Loi|n
+恩典时代|l’ère de la Grâce|n
+国度时代|l’ère du Règne|n
+千年国度时代|l’ère du Règne Millénaire|n
+道成肉身|s’incarner / devenir chair / se faire chair|v
+道成肉身|incarnation|n
+道成肉身|incarné|a
+道成肉身的（正常）人性|l’humanité (normale) de Dieu incarné|p
+末世|les derniers jours|p
+经营|gérer|v
+经营|gestion|n
+经营计划|plan de gestion|p
+经营工作|l’œuvre de gestion|p
+征服|conquérir|v
+征服|conquête|n
+性情|tempérament|n
+神的（原有）性情|le tempérament (inhérent) de Dieu|p
+人的性情|le tempérament de l’homme|p
+本性|nature|n
+威严|majestueux|a
+威严|majesté|n
+公义的|juste|a
+公义|justice|n
+审判|juger|v
+审判|jugement|n
+刑罚|châtier|v
+刑罚|châtiment|n
+拯救|sauver|v
+拯救|salut|n
+惩罚|punir|v
+惩罚|punition|n
+管教|discipliner|v
+管教|discipline|n
+熬炼|épurer|v
+熬炼|épurement|n
+试炼|éprouver|v
+试炼|épreuve|n
+试探|tentation|n
+试探|tenter / tester|v
+修理/对付|émonder|v
+修理/对付|émondage|n
+成全|perfectionner / parfaire|v
+成全|rendre parfait|w
+作成|rendre complet|w
+审判工作|l’œuvre du jugement|p
+征服工作|l’œuvre de la conquête|p
+救赎工作|l’œuvre de la rédemption|p
+拯救工作|l’œuvre du salut|p
+触犯（神的性情）|offenser|v
+触犯（神的性情）|offense|n
+不可侵犯的|inviolable|a
+不可侵犯|inviolabilité|n
+触犯（诫命、条例）|violation|n
+触犯（诫命、条例）|violer|v
+触犯神|commettre une offense contre Dieu|w
+得罪神|offenser Dieu|w
+（性情）不可触犯|ne doit pas être offensé|w
+过犯|transgression|n
+过犯|transgresser|v
+罪|péché|n
+权柄|autorité|n
+神的权柄|autorité de Dieu|p
+神的能力|puissance de Dieu|p
+撒但的权势|l’influence de Satan|p
+大红龙|le grand dragon rouge|n
+人的本分|le devoir de l’homme|p
+神的职分|le ministère de Dieu|p
+作人|modeler l’homme / façonner l’homme|w
+事奉神|servir Dieu|w
+效力|rendre service à|w
+效力者|exécutant|n
+效力品|objet de service|n
+效力者试炼|l’épreuve des exécutants|p
+衬托物|faire-valoir|n
+进入|entrer (dans)|v
+进入|entrée (dans)|n
+生命进入|entrée dans la vie|p
+开启|éclairer|v
+开启|éclairage|n
+光照|illuminer|v
+光照|illumination|n
+神的神性|divinité de Dieu|p
+神的本体|personne de Dieu|p
+神的所是|l’être de Dieu|p
+神的所有|les possessions de Dieu|p
+基督教|christianisme|n
+基督徒|chrétien / chrétienne|n
+撒但|Satan|n
+三层天|le troisième ciel|p
+敌基督|antéchrist|n
+假基督|faux christ|p
+异象|vision|n
+归宿|destination|n
+敬畏神远离恶|craindre Dieu et s’éloigner du mal|w
+身量|stature|n
+败坏|corrompre|v
+败坏的|corrompu|a
+败坏|corruption|n
+观念|notion|n
+子民|le peuple de Dieu|p
+天地万物|les cieux, la terre et toutes choses|p
+无底深坑|le puits de l’abîme|p
+地狱|enfer|n
+硫磺火湖|l’étang de feu et de soufre|p
+神的实际作工|l’œuvre concrète de Dieu|p
+神的全能|la toute-puissance de Dieu|p
+神的智慧|sagesse de Dieu|p
+洁净|purifier|v
+洁净|purification|n
+背叛（神、真理等）|trahir|v
+敬畏|craindre|v
+交通|échange|n
+势力|force|n
+黑暗势力|forces des ténèbres|p
+理智|raison|n
+理性的|rationnel|a
+正常|normal|a
+相合|compatible|a
+相合|compatibilité|n
+发表|exprimer|v
+发表|expression|n
+保守|protéger|v
+保守|protection|n
+长老|ancien|n
+牧师|pasteur|n
+祭司|sacrificateur|n
+诫命|commandement|n
+赎罪祭|sacrifice d’expiation|p
+诚实的|honnête|a
+诚实|honnêteté|n
+使命|mission|n
+旨意|la volonté|n
+实质|essence|n
+本质|substance|n
+天使长|archange|n
+负担|fardeau|n
+怜悯|miséricorde|n
+神的显现|apparition de Dieu|p
+破碎|briser|v
+厌弃|détester et abandonner|v
+活出|vivre / manifester|v
+实行|pratiquer / mettre en pratique|v
+显明（败坏或人被显明等）|révéler|v
+显明（败坏或人被显明等）|révélation|n
+揭露|exposer|v
+揭示（奥秘等）|dévoiler|v
+启示|révéler|v
+启示|révélation|n
+浇灌|abreuver|v
+浇灌|abreuvement|n
+站住见证|rester ferme dans son témoignage|w
+结局|l’issue / résultat|n
+（神）摆布|orchestrer|v
+（神的）摆布|orchestration|n
+(撒但）摆布|manipuler|v
+(撒但的）摆布|manipulation|n
+尽本分|accomplir son devoir / faire son devoir|w
+理性|rationalité|n
+正常人性|humanité normale|p
+正常理智|raison normale|p
+与神相合|être compatible avec Dieu|w
+与神不相合|être incompatible avec Dieu|w
+为神花费|se dépenser pour Dieu|w
+神的托付|mandat de Dieu / commission de Dieu|p
+人的样式|ressemblance humaine|p
+素质|calibre|n
+（神的）形象|image (de Dieu)|p
+神的话|la parole de Dieu / les paroles de Dieu|p
+发声|déclaration|n
+烈怒|le courroux|n
+烈怒的|courroucé|a
+愤怒|colère|n
+震怒|fureur|n
+恩赐|don|n
+悖逆|se rebeller contre|w
+悖逆|rébellion|n
+悖逆的|rebelle|a
+顺服|se soumettre / obéir|v
+顺服|soumission / obéissance|n
+顺服的|soumis / obéissant|a
+被神得着|gagné par Dieu|w
+主宰|souveraineté|n
+主宰者|le Souverain|n
+真道|la vraie voie|p
+天国福音|l’Évangile du royaume des cieux|p
+国度福音|l’Évangile du Règne|p
+沉沦|perdition|n
+打岔|interrompre / perturber|v
+打岔|interruption / perturbation|n
+搅扰|perturber|v
+搅扰|perturbation|n
+鉴察|scruter|v
+鉴察|examen|n
+狂妄|arrogant|a
+狂妄|arrogance|n
+自大的|prétentieux|a
+自大|prétention|n
+自是的|présomptueux|a
+自是|présomption|n
+自高的|suffisant|a
+自高|suffisance|n
+标本|spécimen|n
+标杆|exemple|n
+模型|modèle|n
+恶行|acte malfaisant / actes malfaisants|p
+善行|bonne action / bonnes actions|p
+灵界|le domaine spirituel|p
+消极|négatif|a
+各宗各派|toutes religions et confessions|p
+老好人|personne complaisante|p
+成就神旨意|accomplir la volonté de Dieu|w
+遵行神旨意|suivre la volonté de Dieu|w
+通行神旨意|faire la volonté de Dieu|w
+神的心意|l’intention de Dieu / les intentions de Dieu|p
+满足神心意|satisfaire l’intention de Dieu|w
+达到神心意|répondre à l’intention de Dieu|w
+处世哲学|philosophie des relations mondaines|p
+人生哲学|philosophie de vie|p
+规条|règlement|n
+道理|doctrine|n
+通灵|avoir une compréhension spirituelle|w
+刚硬|intransigeant / endurci|a
+刚硬|intransigeance / dureté|n
+淘汰|éliminer|v
+开除|expulser|v
+清理|purger / évincer|v
+清理|purge|n
+真理实际|la vérité-réalité|p
+真理原则|la vérité-principe|p
+本性实质|la nature-essence|p
+生命性情|tempérament-vie|p
+生命实际|la vie-réalité|p
+生命真理|la vie-vérité|p
+人性实质|l’humanité-essence|p
+神话原则|les principes des paroles de Dieu|p
+神话真理|la vérité des paroles de Dieu|p
+真理生命|la vérité et la vie|p
+宇宙万物|l’univers et toutes choses|p
+神的权下|la domination de Dieu|p
+撒但权下|l’emprise de Satan|p
+爱神的心|cœur qui aime Dieu|p
+敬畏神的心|cœur qui craint Dieu|p
+顺服神的心|cœur soumis à Dieu|p
+经历见证|témoignage d’expérience|p
+字句道理|les formules et les doctrines|p
+情感|sentiment / affection|n
+情感的|sentimental|a
+领受能力|capacité de compréhension|p
+罪身的形象|ressemblance de la chair pécheresse|p
+错谬的|fallacieux|a
+错谬|fausseté|n
+偏谬的|déformé|a
+偏谬|déformation|n
+实行原则|principe de pratique|p
+野心欲望|ambition et désir|p
+正义的|juste|a
+正义|justice|n
+正义感|sens de la justice|p
+省察|examiner|v
+反省|réfléchir à / réfléchir sur|v
+神的身份|l’identité de Dieu|p
+神的地位|le statut de Dieu|p
+邪恶的|malveillant|a
+邪恶|malveillance|n
+邪恶的人|personne malveillante|p
+作恶的人|malfaiteur / malfaitrice|n
+恶人|personne malfaisante|p
+察看|observer|v
+受造之物（人）|un être créé / des êtres créés|p
+诡诈|fourbe|a
+诡诈|la fourberie|n
+迷惑|induire en erreur / fourvoyer|v
+神的实际|aspect concret de Dieu|p
+尊神为大|honorer Dieu comme étant grand|w
+地位之福|les avantages du statut|p
+人格|intégrité / caractère|n
+性格|personnalité|n
+渺茫|chimérique|a
+来世|le monde à venir / la prochaine vie|p
+合格（的）|qualifié|a
+扩展（福音）|diffuser|v
+传（福音）|prêcher|v
+纪念|commémorer|v
+出卖|vendre / trahir|v
+灾难|désastre|n
+抵触|résister|v
+抵触|résistance|n
+理想|aspiration / idéal|n
+谣言|rumeur infondée|p
+监督|superviser|v
+劝勉|exhorter|v
+劝勉|exhortation|n
+名利|la gloire et le gain|p
+患难|tribulation|n
+指导|diriger / guider|v
+典章|statut|n
+被提|être enlevé|w
+配合|coopérer|v
+配合|coopération|n
+撤换|renvoyer|v
+培养|cultiver|v
+恶魔|le diable malfaisant|p
+羞辱(神/神的名)|déshonorer / faire honte à|v
+忠心|dévouement / loyauté|n
+万劫不复|damnation éternelle|p
+分别为圣|mis à part comme saint|w
+预定|prédestiner|v
+预定|prédestination|n
+完全人|personne parfaite|p
+见证|témoignage|n
+今世|cette vie|p
+认可|reconnaître|v
+认可|la reconnaissance|n
+万物|toutes choses|p
+救恩|la grâce salvatrice|p
+毁灭|détruire|v
+毁灭|destruction|n
+灭亡|périr|v
+作王|régner|v
+掌权|exercer le pouvoir|w
+穹苍|le firmament / la voûte céleste|n
+清心|un cœur pur|p
+放下（自己）|renoncer à soi-même|w
+大能|la grande puissance (de Dieu)|p
+属性|attribut|n
+荣光|lumière glorieuse|p
+应许|promesse|n
+宽容|indulgence|n
+包容|tolérance|n
+忍耐|patience|n
+彰显|manifester|v
+彰显|manifestation|n
+拣选|choisir / sélectionner|v
+愚昧|stupide|a
+愚昧|stupidité|n
+无知|ignorant|a
+无知|ignorance|n
+揣摩|méditer|v
+存心|intention|n
+亲近神|s’approcher de Dieu|w
+认识|connaître|v
+认识|connaissance|n
+神家|la maison de Dieu|p
+顺服至死|se soumettre jusqu’à la mort|w
+聚会|réunion|n
+聚会|se réunir|v
+敬虔|pieux|a
+敬虔|piété|n
+真理|la vérité|n
+恶者|le malin|n
+赏善罚恶|récompenser les bons et punir les méchants|w
+圣灵感动|être ému par le Saint-Esprit|w
+救主|Sauveur|n
+圣名|saint nom / nom saint|p
+热心|zélé|a
+热心|zèle|n
+信神|croire en Dieu|w
+（对神的）信|croyance|n
+（对神的）信心|foi|n
+命运|destin / destinée|n
+隐藏|cacher|v
+卑微|humble|a
+降卑|s’humilier|v
+可爱|aimable|a
+可爱|amabilité|n
+难测|insondable|a
+情形|état|n
+光景|condition|n
+独一真神|le seul vrai Dieu|p
+悦纳|accepter|v
+悦纳|acceptation|n
+称许|approuver|v
+称许|approbation|n
+仇视|hostile|a
+仇视|hostilité|n
+仇恨|haïr|v
+仇恨|haine|n
+约束|restreindre|v
+辖制|contraindre|v
+灵修|dévotions spirituelles|p
+儆醒|vigilant|a
+与神较量|lutter contre Dieu|w
+攻克己身|maîtriser son corps|w
+脱去（败坏性情）|se débarrasser de|w
+弯曲|tortueux|a
+血气|impétueux|a
+尽好本分|bien faire son devoir|w
+尽到本分|mener à bien son devoir|w
+亵渎|blasphémer contre|v
+经文|l’Écriture|n
+牧养|paître / conduire|v
+得胜者|vainqueur|n
+付代价|payer un prix|w
+误解|malentendu|n
+跟随神|suivre Dieu|w
+享受神|prendre plaisir en Dieu / jouir de Dieu|w
+安静在神面前|s’apaiser devant Dieu|w
+蒙拯救|être sauvé / recevoir le salut|w
+剪除|retrancher|v
+祈求|supplier|v
+实行公义|pratiquer la justice|w
+承受（神的产业、祝福、荣耀）|hériter de|v
+（神的）选民|le peuple élu de Dieu / les élus de Dieu|p
+阴间|Hadès / séjour des morts|n
+不信派|incrédule|n
+外邦人|non-croyant|n
+福音队|équipe d’évangélisation|p
+福音工作|travail d’évangélisation|p
+组长|chef d’équipe|p
+三书|Trois Déclarations|p
+§MORE`;
+const POS={v:"动词",n:"名词",a:"形容词",p:"名词短语",w:"动词短语"};
+const pf=w=>w.f.split(" / ")[0];
+const W=RAW.split("\n").filter(l=>l.includes("|")).map(l=>{const[z,f,p]=l.split("|");return{id:z+"|"+f.split(" / ")[0],z,f,p}});
+const EASY=new Set(["dieu","jésus","satan","péché","nature","raison","loi","vie","justice","juste"]);
+const STOP=/^(le|la|les|l|de|du|des|d|à|en|un|une|mon|ma|se|s|qqn|qch|et)$/i;
+const words=f=>f.replace(/\([^)]*\)/g," ").replace(/[’']/g," ").split(/[\s,-]+/).filter(x=>x&&!STOP.test(x));
+function lvl(w){const ws=words(pf(w));if(ws.length===1&&EASY.has(ws[0].toLowerCase()))return"A1";const sc=Math.max(...ws.map(x=>x.length),0)+1.5*(ws.length-1);return sc<=4?"A1":sc<=7?"A2":sc<=10?"B1":sc<=13?"B2":sc<=16?"C1":"C2"}
+const MM=new Set("péché salut don enfer tempérament examen spécimen courroux fardeau calibre archange ancien pasteur sacrificateur courant antéchrist exemple modèle règlement peuple groupe règne principe ministère monde domaine sacrifice diacre étang puits plan devoir objet fils père seigneur créateur dieu satan jésus esprit saint-esprit tout-puissant éternel jugement châtiment échange éclairage commandement témoignage christianisme dragon ciel nom".split(" "));
+function gender(w){
+ if(!/^[np]$/.test(w.p))return null;
+ let t=pf(w).replace(/^\((le|la|les|l’|mon|ma)\)\s*/i,"$1 ").replace(/\([^)]*\)/g," ").trim().toLowerCase().replace(/’/g,"'");
+ let g=null,pl=false,known=false;
+ let m=t.match(/^(le|un|mon|la|une|ma|les|l')\s*(.*)$/);
+ if(m){const a=m[1];t=m[2];known=true;if(a==="les")pl=true;else if(/^(le|un|mon)$/.test(a))g="m";else if(/^(la|une|ma)$/.test(a))g="f"}
+ const h=(t.split(/[\s-]+/)[0]||"");
+ if(!g){known=false;g=MM.has(h)?"m":/teur$/.test(h)||/(ment|isme|age|eau|oir|ier)$/.test(h)?"m":/(tion|sion|xion|té|ité|ence|ance|ure|ie|ée|ude|esse|ine|ette|eur|ère|ison)$/.test(h)?"f":/e$/.test(h)?"f":"m"}
+ if(/\(s\)/.test(w.f))pl=null;
+ return{g,pl,inf:!known};
+}
+const tags=w=>{let s=`<span class="tag">${POS[w.p]}</span>`,x=gender(w);if(x)s+=`<span class="tag">${x.g==="m"?"阳性":"阴性"}·${x.pl===null?"单/复":x.pl?"复数":"单数"}${x.inf?"*":""}</span>`;return s};
+const $=i=>document.getElementById(i);
+const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const norm=s=>s.trim().toLowerCase().replace(/[’‘]/g,"'").replace(/\s+/g," ");
+const strip=s=>norm(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+const art=s=>s.replace(/^(le |la |l'|les |un |une |mon |ma )/,"");
+const alts=f=>f.split(" / ").flatMap(a=>[a,a.replace(/\s*\([^)]*\)\s*/g," ").trim(),a.replace(/[()]/g,"")]);
+const ld=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+W.forEach(w=>w.lv=lvl(w));
+const LV=["A1","A2","B1","B2","C1","C2"];
+let S={};
+const show_=id=>["home","play","end","list"].forEach(i=>$(i).classList.toggle("hidden",i!==id));
+function home(){
+ show_("home");const m=ld("frs_m",{}),wr=ld("frs_w",[]);
+ $("home").innerHTML=`<p class="sub">当前词条共 ${W.length} 个</p>`+LV.map(k=>{const ws=W.filter(w=>w.lv===k),d=ws.filter(w=>(m[w.id]||0)>=2).length;return ws.length?`<button class="lv" data-k="${k}"><div><b>${k}</b>${ws.length} 个词条</div><span>已掌握 ${d} / ${ws.length}</span></button>`:""}).join("")+
+ `<button class="lv" data-k="_all"><div><b>🔀</b>全部混合</div><span>${W.length} 条</span></button><button class="lv" data-k="_w"><div><b>📒</b>错词本</div><span>${wr.length} 条</span></button><button class="lv" data-k="_l"><div><b>🔍</b>词表查询</div><span>带阴阳性数</span></button>`;
+ document.querySelectorAll(".lv").forEach(b=>b.onclick=()=>b.dataset.k==="_l"?browse():start(b.dataset.k));
+}
+function browse(){
+ show_("list");
+ $("list").innerHTML=`<div class="top"><input class="ans" id="q" placeholder="搜索中文或法语…"><button class="btn alt" style="margin:0" id="bk">返回</button></div><div class="card" id="rs"></div>`;
+ const draw=()=>{const q=norm($("q").value);const r=W.filter(w=>!q||(w.z+" "+strip(w.f)).includes(strip(q))).slice(0,80);
+  $("rs").innerHTML=r.map(w=>`<div class="row"><div><b>${w.z}</b><small>${w.lv}</small></div><div style="text-align:right"><b>${w.f}</b><br>${tags(w)}</div></div>`).join("")||"没有匹配的词条";};
+ $("q").oninput=draw;$("bk").onclick=home;draw();
+}
+function start(k){
+ const m=ld("frs_m",{}),wr=ld("frs_w",[]);
+ const pool=k==="_all"?W:k==="_w"?W.filter(w=>wr.includes(w.id)):W.filter(w=>w.lv===k);
+ if(!pool.length){alert("错词本是空的，先去闯关吧！");return}
+ const ws=sh(pool).sort((a,b)=>(m[a.id]||0)-(m[b.id]||0)).slice(0,10);
+ const qs=[...sh(ws).map(w=>({w,t:"m",dir:Math.random()<.5?"z2f":"f2z"})),...sh(ws).map(w=>({w,t:"f",dir:"z2f"}))];
+ S={k,qs,i:0,ok:0,wrong:[]};show_("play");next();
+}
+function next(){
+ const x=S.qs[S.i],w=x.w,n=S.qs.length;if(x.t==="f")x.dir="z2f";
+ const ask=x.dir==="z2f"?w.z:pf(w);let body;
+ if(x.t==="m"){
+  const key=x.dir==="z2f"?"f":"z",val=o=>key==="f"?pf(o):o.z;
+  const ds=sh(W.filter(o=>o.id!==w.id&&val(o)!==val(w)&&(o.p===w.p||Math.random()<.2))).filter((o,i,a)=>a.findIndex(p=>val(p)===val(o))===i).slice(0,3);
+  x.ans=val(w);body=sh([w,...ds]).map(o=>`<button class="opt" data-v="${val(o).replace(/"/g,"&quot;")}">${val(o)}</button>`).join("");
+ }else{
+  const f0=norm(pf(w));
+  body=`<input class="ans" id="ans" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="输入法语…"><div class="acc">${"éèêàâçôùûîïœ".split("").map(c=>`<button data-c="${c}">${c}</button>`).join("")}</div><small>提示：首字母 ${f0[0].toUpperCase()}，共 ${f0.replace(/[^a-zà-ÿœ]/g,"").length} 个字母</small><br><button class="btn" id="chk">检查</button>`;
+ }
+ $("play").innerHTML=`<div class="bar"><span>${S.k[0]==="_"?"混合":S.k} · ${x.t==="m"?"① 选择阶段":"② 填空阶段"} · 第 ${S.i+1}/${n} 题</span><span>答对 ${S.ok}</span></div><div class="track"><div class="fill" style="width:${S.i/n*100}%"></div></div>
+ <div class="card"><span class="tag">${w.lv}</span><span class="tag">${x.t==="m"?"选择题":"填空题"}</span>${x.dir==="z2f"?`<span class="tag">${POS[w.p]}</span>`:tags(w)}<div class="q">${ask}</div>${body}<div id="fb"></div></div>`;
+ if(x.t==="m")document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>judge(b.dataset.v===x.ans,b));
+ else{
+  const inp=$("ans");inp.focus();
+  document.querySelectorAll(".acc button").forEach(b=>b.onclick=()=>{inp.value+=b.dataset.c;inp.focus()});
+  const go=()=>{const v=inp.value;if(!v.trim())return;const A=alts(w.f);
+   const ex=A.some(a=>art(norm(a))===art(norm(v))),lo=A.some(a=>art(strip(a))===art(strip(v)));
+   judge(ex||lo,null,lo&&!ex?"（注意重音：应为 "+w.f+"）":"")};
+  $("chk").onclick=go;inp.onkeydown=e=>{if(e.key==="Enter")go()};
+ }
+}
+function judge(ok,btn,note=""){
+ const x=S.qs[S.i],w=x.w;
+ if(x.t==="m")document.querySelectorAll(".opt").forEach(b=>{b.disabled=true;if(b.dataset.v===x.ans)b.classList.add("ok");else if(b===btn)b.classList.add("bad")});
+ else{$("ans").disabled=true;$("chk").classList.add("hidden")}
+ const m=ld("frs_m",{}),wr=ld("frs_w",[]);
+ if(ok){S.ok++;m[w.id]=(m[w.id]||0)+(x.t==="f"?1:0);if(m[w.id]>=2)sv("frs_w",wr.filter(i=>i!==w.id))}else{if(!S.wrong.includes(w))S.wrong.push(w);m[w.id]=0;if(!wr.includes(w.id))sv("frs_w",[...wr,w.id])}
+ sv("frs_m",m);const last=S.i>=S.qs.length-1;
+ $("fb").innerHTML=`<div class="fb">${ok?"✅ 正确！":"❌ 再记一下。"}${note}<br><b>${w.z}</b> = <b>${w.f}</b><br>${tags(w)}</div><button class="btn" id="nx">${last?"查看结果":"下一题"}</button>`;
+ $("nx").onclick=()=>{if(last)fin();else{S.i++;next()}};
+}
+function fin(){
+ show_("end");
+ $("end").innerHTML=`<div class="card"><p class="big">${S.ok} / ${S.qs.length}</p>${S.wrong.length?"<b>需要复习：</b><ul>"+S.wrong.map(w=>`<li>${w.z} → <b>${w.f}</b> ${tags(w)}</li>`).join("")+"</ul>":"<p>🎉 全部答对！</p>"}
+ <button class="btn" id="a">再来一轮</button><button class="btn alt" id="h">返回</button></div>`;
+ $("a").onclick=()=>start(S.k);$("h").onclick=home;
+}
+home();
+</script>
+</body>
+</html>
