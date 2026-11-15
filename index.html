@@ -1174,7 +1174,7 @@ function scenQuizRender(){
     opts.forEach(x=>{x.disabled=true});
     const pick=+b.dataset.o,ok=pick===q.a;
     if(ok){b.style.background="#d9f2dd";try{if(typeof gain==="function")gain(10)}catch(e){}SQ.score++;}
-    else{b.style.background="#fbd9d9";const right=opts[q.a];if(right)right.style.background="#d9f2dd";}
+    else{b.style.background="#fbd9d9";const right=opts[q.a];if(right)right.style.background="#d9f2dd";try{if(typeof resetRightStreak==="function")resetRightStreak()}catch(e){}}
     $("sqWhy").innerHTML='<p style="margin:0"><b>'+(ok?"答对了！+10 XP":"答错了")+'</b><br>'+esc(q.why)+'</p>';
     const nx=$("sqNext");nx.style.display="";nx.onclick=()=>{SQ.qi++;scenQuizRender();};
   }});
@@ -1607,7 +1607,7 @@ function sentRender(){
   const s=it.s,full=s.f.replace("___",s.a);
   let qhtml,opts,correctIdx;
   if(it.type==="f"){
-    qhtml='<h3 style="margin:0 0 12px">'+esc(s.f.replace("___","______"))+'</h3><p class="sub">选一个词填进句子里：</p>';
+    qhtml='<h3 style="margin:0 0 12px">'+esc(s.f.replace("___","______"))+'</h3><p class="sub">这句话的意思是：'+esc(s.z)+'<br>选一个词填进句子里：</p>';
     opts=sh([s.a].concat(sentDistractors(s)));
     correctIdx=opts.indexOf(s.a);
   }else{
@@ -1631,7 +1631,7 @@ function sentRender(){
     obtns.forEach(x=>{x.disabled=true});
     const pick=+b.dataset.o,ok=pick===correctIdx;
     if(ok){b.style.background="#d9f2dd";try{if(typeof gain==="function")gain(10)}catch(e){}SENTQ.score++;}
-    else{b.style.background="#fbd9d9";const right=obtns[correctIdx];if(right)right.style.background="#d9f2dd";}
+    else{b.style.background="#fbd9d9";const right=obtns[correctIdx];if(right)right.style.background="#d9f2dd";try{if(typeof resetRightStreak==="function")resetRightStreak()}catch(e){}}
     $("sqWhy").innerHTML='<p style="margin:0"><b>'+(ok?"答对了！+10 XP":"答错了")+'</b><br>完整句子：'+esc(full)+'（'+esc(s.z)+'） <button class="spk" id="sqSay" title="听发音">🔊</button></p>';
     const sb=$("sqSay");
     if(sb){sb.onclick=()=>{try{if(typeof say==="function")say(full)}catch(e){}};}
