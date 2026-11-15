@@ -939,5 +939,99 @@ function isWordFavorite(id){return ld("frs_fav",[]).includes(id)}
 function toggleWordFavorite(id){const a=ld("frs_fav",[]),i=a.indexOf(id);if(i>=0)a.splice(i,1);else a.push(id);sv("frs_fav",a);return i<0}
 function renderGradebook(title,records,correct){const sec=document.createElement("section");sec.className="gradebook";const errors=records.filter(r=>!r.ok).length;sec.innerHTML=`<h2>📋 本轮成绩单 · ${esc(title)}</h2><p class="gradebook-summary">答对 ${correct}/${records.length} 题 · 需要再看 ${errors} 题。绿色是答对，红色是待加强；点法语按钮可以听发音。</p><div class="gradebook-grid">${records.map((r,i)=>{const fav=r.wordId?isWordFavorite(r.wordId):false,french=String(r.french||""),hasFrench=/[A-Za-zÀ-ÖØ-öø-ÿœŒ]/.test(french)&&!/[\u3400-\u9fff]/.test(french);return `<article class="grade-item ${r.ok?"ok":"bad"}"><b>${r.ok?"✓ 答对":"× 再练一次"} · 第 ${i+1} 题</b><p>${esc(r.question||"本题")}</p><p>你的答案：${esc(r.selected||"（未记录）")}</p>${!r.ok?`<p>正确答案：${esc(r.answer||"")}</p>`:""}${r.explanation?`<p>提示：${esc(r.explanation)}</p>`:""}${hasFrench?`<button class="spk" type="button" data-grade-audio="${i}">🔊 法语发音</button>`:""}${r.wordId?`<button class="fav-btn ${fav?"is-saved":""}" type="button" data-grade-fav="${i}">${fav?"★ 已收藏":"☆ 收藏生词"}</button>`:""}</article>`}).join("")}</div>`;document.getElementById("end").appendChild(sec);sec.querySelectorAll("[data-grade-audio]").forEach(b=>b.onclick=()=>say(records[+b.dataset.gradeAudio].french));sec.querySelectorAll("[data-grade-fav]").forEach(b=>b.onclick=()=>{const r=records[+b.dataset.gradeFav],saved=toggleWordFavorite(r.wordId);b.classList.toggle("is-saved",saved);b.textContent=saved?"★ 已收藏":"☆ 收藏生词"});}
 </script>
+
+<script>
+// 学习方向选择（第一步：只做选择界面，内容分类以后再分）
+// 方向保存在各昵称的本地档案里（frs_track），可随时在首页或“我的”里改。
+// 现在选好方向后，学习内容暂时还和以前一样；等内容按方向分好类后，
+// 词汇、发音、语法会按这里选的方向来出题。
+const TRACKS = {
+  general: {label: "日常法语", desc: "问候、数字、家人、食物、颜色等通用词，适合日常交流"},
+  spiritual: {label: "属灵法语", desc: "信仰、祷告、聚会等属灵、宗教词汇，适合想学属灵表达的朋友"},
+  both: {label: "两者都要", desc: "日常法语和属灵法语都学"}
+};
+function getTrack(){
+  try{
+    const t = ld("frs_track", null);
+    return TRACKS[t] ? t : null;
+  }catch(e){ return null; }
+}
+function setTrack(t){
+  if(!TRACKS[t]) return false;
+  try{ sv("frs_track", t); }catch(e){}
+  return true;
+}
+function showTrackPicker(onDone){
+  show_("home");
+  try{ if(typeof hud === "function") hud(); }catch(e){}
+  const cur = getTrack();
+  const cards = Object.keys(TRACKS).map(function(k){
+    const t = TRACKS[k];
+    const sel = cur === k ? " ★ 当前选择" : "";
+    return '<button class="lv" data-track="' + k + '"><div><b>' + t.label + '</b>' + sel + '</div><span>' + t.desc + '</span></button>';
+  }).join("");
+  $("home").innerHTML =
+    '<div class="card" style="margin-bottom:14px"><h3 style="margin:0 0 8px">👋 先选一个学习方向</h3>' +
+    '<p class="sub" style="margin:0">这个网站是给朋友们学的，有人想学日常法语，有人想学属灵法语。选一次就记住，之后随时可以在首页或“我的”里改。</p>' +
+    '<p class="sub" style="margin:8px 0 0">内容分类正在准备中：先选好方向，之后词汇、发音、语法会按方向来出题。现在选好后，先按原来的内容继续学。</p></div>' +
+    cards;
+  document.querySelectorAll("#home [data-track]").forEach(function(b){
+    b.onclick = function(){
+      const t = b.dataset.track;
+      if(setTrack(t)){
+        try{ toast("已选择：" + TRACKS[t].label); }catch(e){}
+        if(typeof onDone === "function") onDone();
+        else home();
+      }
+    };
+  });
+}
+// 首页：没选过方向时先弹出选择界面；选过后在首页顶部显示当前方向，可切换。
+(function(){
+  const _homeTrack = home;
+  home = function(){
+    if(!CUR) return welcome();
+    if(!getTrack()) return showTrackPicker(function(){ home(); });
+    _homeTrack();
+    try{
+      const el = $("home");
+      if(!el) return;
+      const t = getTrack();
+      const card = document.createElement("div");
+      card.className = "card";
+      card.style.marginBottom = "14px";
+      card.innerHTML = '<b>学习方向：' + TRACKS[t].label + '</b>' +
+        '<p class="sub" style="margin:4px 0 8px">' + TRACKS[t].desc + '</p>' +
+        '<button class="btn alt" id="changeTrack" style="margin:0">切换学习方向</button>';
+      el.insertBefore(card, el.firstChild);
+      const btn = document.getElementById("changeTrack");
+      if(btn) btn.onclick = function(){ showTrackPicker(function(){ home(); }); };
+    }catch(e){}
+  };
+  // “我的”页：在底部加一个学习方向卡片，可切换。
+  const _meTrack = me;
+  me = function(){
+    _meTrack();
+    try{
+      const el = $("home");
+      if(!el) return;
+      const t = getTrack();
+      const card = document.createElement("div");
+      card.className = "card";
+      card.style.marginTop = "14px";
+      card.innerHTML = '<b>学习方向</b><p class="sub">当前：' + (t ? TRACKS[t].label : "还没选") + '。选好后随时可以改。</p>' +
+        '<button class="btn alt" id="changeTrackMe" style="margin-left:0">切换学习方向</button>';
+      el.appendChild(card);
+      const btn = document.getElementById("changeTrackMe");
+      if(btn) btn.onclick = function(){ showTrackPicker(function(){ home(); }); };
+    }catch(e){}
+  };
+  // 刚打开页面时，如果已登录但还没选过方向，弹出选择界面。
+  try{
+    if(CUR && !getTrack()) home();
+  }catch(e){}
+})();
+
+</script>
 </body>
 </html>
