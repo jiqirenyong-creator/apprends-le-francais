@@ -1211,5 +1211,168 @@ function scenQuizRender(){
 })();
 
 </script>
+<style>
+/* ---- 多邻国式升级：闯关路、会动的 Yuki、爱心、圆胖按钮 ---- */
+.btn{border-radius:14px!important;border-bottom:4px solid #5d3a70!important;transition:transform .08s ease,filter .15s ease}
+.btn:active{transform:translateY(3px)!important;border-bottom-width:1px!important}
+.btn.alt{border-bottom:4px solid #cfc4d6!important}
+.lv{border:2px solid var(--line)!important;border-bottom:4px solid var(--line)!important;border-radius:16px!important;box-shadow:0 2px 0 rgba(0,0,0,.04);transition:transform .12s ease,box-shadow .12s ease}
+.lv:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.12)}
+.lv:active{transform:translateY(1px)}
+/* 小号浮动提示：不再盖住导航 */
+.fl{font-size:1.15rem!important;text-shadow:none!important;top:auto!important;bottom:14%!important;background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:999px;padding:8px 18px;box-shadow:0 6px 20px rgba(0,0,0,.18);animation:flUp 1.1s ease-out forwards!important}
+@keyframes flUp{0%{opacity:0;transform:translate(-50%,12px)}15%{opacity:1;transform:translate(-50%,0)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-18px)}}
+/* Yuki 提示卡不被屏幕边切掉 */
+.yuki-pop{right:10px!important;bottom:10px!important;max-width:calc(100vw - 20px)!important}
+.yuki-pop img{width:96px!important;height:96px!important}
+@media(min-width:700px){.yuki-pop img{width:122px!important;height:122px!important}}
+/* 会动的 Yuki：平时轻轻晃，点一点会跳 */
+.yuki-avatar{animation:yukiBob 2.6s ease-in-out infinite}
+.yuki-welcome img{animation:yukiBob 2.6s ease-in-out infinite}
+@keyframes yukiBob{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-6px) rotate(-2deg)}}
+.yuki-jump{animation:yukiJump .6s ease!important}
+@keyframes yukiJump{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-16px) scale(1.06) rotate(3deg)}60%{transform:translateY(2px) scale(.97)}100%{transform:translateY(0) scale(1)}}
+/* 备份框占满整行 */
+#bx{width:100%!important;box-sizing:border-box!important;display:block!important;margin:10px 0!important}
+/* ---- 多邻国式弯曲闯关路 ---- */
+.path-wrap{position:relative;max-width:420px;margin:0 auto;padding:10px 0 30px}
+.path-line{position:absolute;left:50%;top:0;bottom:0;width:6px;margin-left:-3px;background:repeating-linear-gradient(#d9cbe6 0 12px,transparent 12px 24px);border-radius:3px}
+.path-node{position:relative;display:flex;flex-direction:column;align-items:center;margin:0 auto 26px;width:130px}
+.path-btn{width:74px;height:74px;border-radius:50%;border:none;cursor:pointer;font-size:1.5rem;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;transition:transform .12s ease}
+.path-btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.18)!important}
+.path-btn.done{background:linear-gradient(180deg,#58cc02,#46a302);box-shadow:0 5px 0 #3c8a02}
+.path-btn.current{background:linear-gradient(180deg,#ffc800,#f0a500);color:#5b3a00;box-shadow:0 5px 0 #d18d00;animation:nodePulse 1.6s ease-in-out infinite}
+.path-btn.locked{background:#e5e0ea;color:#9a93a5;box-shadow:0 5px 0 #cfc8d8;cursor:not-allowed}
+@keyframes nodePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.path-stars{font-size:.95rem;color:#e8a100;letter-spacing:2px;margin-top:6px;min-height:1.2em}
+.path-name{font-size:.85rem;color:var(--mute);margin-top:2px;text-align:center}
+.path-yuki{position:absolute;left:50%;bottom:calc(100% - 6px);width:66px;transform:translateX(-50%);animation:yukiBob 2.2s ease-in-out infinite;pointer-events:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.15))}
+/* 目标与 XP 进度条 */
+.goal-bar{height:12px;border-radius:999px;background:#eee7f3;overflow:hidden}
+.goal-bar>i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#ffc800,#ff9f1c);transition:width .4s ease}
+.hearts-pill{display:inline-flex;gap:2px;font-size:1.05rem;letter-spacing:1px}
+
+</style>
+<script>
+// 多邻国式升级：弯曲闯关路、会动的 Yuki、爱心、今日目标、界面精美化
+// 标题跟随学习方向：日常 → 法语日常学习站，属灵 → 法语宗教词汇学习站，两者都要 → 法语学习站
+const DUO={goal:30,maxHearts:5};
+function duoToday(){const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()}
+function duoHeartsCount(){
+  try{
+    const g=st();
+    if(g.heartDate!==duoToday()){g.hearts=DUO.maxHearts;g.heartDate=duoToday();sv("frs_g",g);}
+    if(typeof g.hearts!=="number")g.hearts=DUO.maxHearts;
+    return Math.max(0,Math.min(DUO.maxHearts,g.hearts));
+  }catch(e){return DUO.maxHearts}
+}
+function duoSetHearts(n){
+  try{const g=st();g.hearts=Math.max(0,Math.min(DUO.maxHearts,n));g.heartDate=duoToday();sv("frs_g",g);}catch(e){}
+}
+function duoGoal(){
+  try{const t=duoToday(),g=ld("frs_goal",{date:t,xp:0});if(g.date!==t)return{xp:0};return g;}catch(e){return{xp:0}}
+}
+function applyTitle(){
+  try{
+    const t=(typeof getTrack==="function"?getTrack():null);
+    const h1=document.querySelector("h1");
+    if(t==="general"){document.title="法语日常学习站";if(h1)h1.textContent="🇫🇷 法语日常学习站";}
+    else if(t==="spiritual"){document.title="法语宗教词汇学习站";if(h1)h1.textContent="✝️ 法语宗教词汇学习站";}
+    else{document.title="法语学习站";if(h1)h1.textContent="🇫🇷 法语学习站";}
+  }catch(e){}
+}
+// ---- 1. 多邻国式弯曲闯关路 ----
+stageMap=function(k){
+  const sg=ld("frs_st",{});
+  const ws=TW().filter(w=>w.lv===k),n=Math.ceil(ws.length/10);
+  let done=0;for(let j=1;j<=n;j++)if(sg[k+"-"+j]&&sg[k+"-"+j].p)done++;
+  const hearts=duoHeartsCount();
+  let h='<button class="btn alt" id="bk" style="margin:0 0 10px">← 返回词汇菜单</button>';
+  h+='<h3 style="margin:0 0 6px">'+k+' 闯关地图</h3>';
+  h+='<p class="sub">每关 10 个词，答对 70% 以上通关并解锁下一关。'+("❤️".repeat(hearts)+"🤍".repeat(DUO.maxHearts-hearts))+' · 通关 '+done+'/'+n+'</p>';
+  h+='<div class="goal-bar" style="margin:0 0 18px"><i style="width:'+(n?done/n*100:0)+'%;background:linear-gradient(90deg,#58cc02,#46a302)"></i></div>';
+  h+='<div class="path-wrap"><div class="path-line"></div>';
+  for(let i=1;i<=n;i++){
+    const r=sg[k+"-"+i],op=i===1||(sg[k+"-"+(i-1)]&&sg[k+"-"+(i-1)].p);
+    const passed=r&&r.p,current=!passed&&op;
+    const off=[0,-64,0,64][(i-1)%4];
+    const cls=passed?"done":op?"current":"locked";
+    const label=passed?"✓":op?i:"🔒";
+    h+='<div class="path-node" style="transform:translateX('+off+'px)">'
+      +(current?'<img class="path-yuki" src="'+(YUKI_STICKERS.allez||YUKI_STICKERS.bravo)+'" alt="Yuki">':'')
+      +'<button class="path-btn '+cls+'" data-n="'+i+'" '+(op?"":"disabled")+'>'+label+'</button>'
+      +'<div class="path-stars">'+(r?"★".repeat(r.s)+"☆".repeat(3-r.s):"☆☆☆")+'</div>'
+      +'<div class="path-name">第 '+i+' 关 · 10 词</div></div>';
+  }
+  h+='</div>';
+  show_("home");$("home").innerHTML=h;
+  $("bk").onclick=()=>vocabMenu();
+  $("home").querySelectorAll(".path-btn").forEach(b=>b.onclick=()=>startStage(k,+b.dataset.n));
+};
+// ---- 2. 会动的 Yuki：点一点它会跳起来给你加油 ----
+document.addEventListener("click",e=>{
+  const img=e.target&&e.target.closest?e.target.closest("img.yuki-avatar,.yuki-welcome img,img.path-yuki"):null;
+  if(!img)return;
+  img.classList.remove("yuki-jump");void img.offsetWidth;img.classList.add("yuki-jump");
+  const msgs=["加油哦！","Yuki 陪你一起学！","Bravo！你真棒！","继续冲，下一关在等你！","汪！今天也要努力呀！"];
+  try{toast(msgs[Math.floor(Math.random()*msgs.length)])}catch(err){}
+});
+// ---- 3. 游戏化：爱心 + 今日目标 + 首页 XP 进度条 ----
+const _gainDuo=gain;
+gain=function(n){
+  _gainDuo(n);
+  try{
+    const t=duoToday(),goal=ld("frs_goal",{date:t,xp:0,done:false});
+    if(goal.date!==t){goal.date=t;goal.xp=0;goal.done=false;}
+    goal.xp=(goal.xp||0)+n;
+    if(!goal.done&&goal.xp>=DUO.goal){goal.done=true;sv("frs_goal",goal);setTimeout(()=>toast("🎉 今日目标完成！Yuki 为你骄傲！"),900);return;}
+    sv("frs_goal",goal);
+  }catch(e){}
+};
+const _finDuo=fin;
+fin=function(){
+  const wasStage=S.stage?{k:S.stage.k,n:S.stage.n}:null;
+  const wasK=S.k,wasOk=S.ok,wasTotal=S.qs?S.qs.length:0;
+  _finDuo();
+  try{
+    if(wasStage&&wasTotal){
+      if(wasOk/wasTotal<.7){
+        duoSetHearts(duoHeartsCount()-1);
+        if(duoHeartsCount()===0)setTimeout(()=>toast("❤️ 爱心用完了！去错词本复习一轮，补一颗爱心吧"),600);
+      }
+    }else if(wasK==="_w"&&wasTotal){
+      duoSetHearts(duoHeartsCount()+1);
+    }
+  }catch(e){}
+};
+const _startStageDuo=startStage;
+startStage=function(k,n){
+  if(duoHeartsCount()<=0){toast("❤️ 爱心用完了！去错词本复习一轮，补一颗爱心吧");return;}
+  _startStageDuo(k,n);
+};
+// 首页：今日目标卡片（爱心 + 今日 XP + 本级 XP 进度条）+ 标题跟随方向
+const _homeDuo=home;
+home=function(){
+  _homeDuo();
+  try{
+    applyTitle();
+    if(typeof CUR==="undefined"||!CUR)return;
+    const el=$("home");if(!el||el.querySelector("[data-duo-goal]"))return;
+    const firstCard=el.querySelector(".card");if(!firstCard)return;
+    const g=st(),xp=g.xp||0,lv=Math.floor(xp/100)+1,prog=xp%100;
+    const goal=duoGoal(),hearts=duoHeartsCount();
+    const html='<div class="card" data-duo-goal style="margin-top:14px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b>🎯 今日目标</b><span class="hearts-pill">'+("❤️".repeat(hearts)+"🤍".repeat(DUO.maxHearts-hearts))+'</span></div>'
+      +'<p class="sub" style="margin:6px 0 4px">今日已得 '+goal.xp+' / '+DUO.goal+' XP'+(goal.xp>=DUO.goal?" · 🎉 已完成":"")+'</p><div class="goal-bar"><i style="width:'+Math.min(100,goal.xp/DUO.goal*100)+'%"></i></div>'
+      +'<p class="sub" style="margin:10px 0 4px">Lv.'+lv+' · 本级 '+prog+' / 100 XP</p><div class="goal-bar"><i style="width:'+prog+'%;background:linear-gradient(90deg,#7a4b8f,#b388d9)"></i></div>'
+      +'<p class="sub" style="margin:8px 0 0">点一点 Yuki，它会给你加油哦 🐾</p></div>';
+    firstCard.insertAdjacentHTML("afterend",html);
+  }catch(e){}
+};
+const _setTrackDuo=setTrack;
+setTrack=function(tr){_setTrackDuo(tr);try{applyTitle()}catch(e){}};
+try{applyTitle()}catch(e){}
+
+</script>
 </body>
 </html>
