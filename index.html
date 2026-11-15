@@ -1510,5 +1510,175 @@ function placeFinish(){
 })();
 
 </script>
+<script>
+// 句子练习：把学过的单词放进句子里练。两种题型：填空（从同词性干扰项里选词填入句子）
+// 和选译文（给法语句子选正确的中文意思）。每轮 10 句，答对 +10 XP，不扣爱心。
+// 句子全部原创 A1/A2 写作，按学习方向过滤：g 日常场景句，s 属灵句，b 通用生活句（两个方向都出）。
+// f 里用 ___ 标出要填的词；a 是正确答案；p 是答案的词性（v/n/a/i），用来从词库里找同词性干扰项。
+const SEN=[
+{f:"Bonjour ! Je ___ Marie.",z:"你好！我叫玛丽。",a:"m’appelle",p:"v",lv:"A1",tr:"b"},
+{f:"Je ___ du pain.",z:"我吃面包。",a:"mange",p:"v",lv:"A1",tr:"b"},
+{f:"Tu ___ français ?",z:"你会说法语吗？",a:"parles",p:"v",lv:"A1",tr:"b"},
+{f:"J’___ le chocolat.",z:"我喜欢巧克力。",a:"aime",p:"v",lv:"A1",tr:"b"},
+{f:"La maison est ___.",z:"房子很大。",a:"grande",p:"a",lv:"A1",tr:"b"},
+{f:"Il est huit ___.",z:"现在八点。",a:"heures",p:"n",lv:"A1",tr:"b"},
+{f:"Ma mère est ___.",z:"我的妈妈很温和。",a:"gentille",p:"a",lv:"A1",tr:"b"},
+{f:"Nous ___ à Paris.",z:"我们住在巴黎。",a:"habitons",p:"v",lv:"A1",tr:"b"},
+{f:"Le chien est ___.",z:"这只狗很小。",a:"petit",p:"a",lv:"A1",tr:"b"},
+{f:"Je ___ de l’eau.",z:"我喝水。",a:"bois",p:"v",lv:"A1",tr:"b"},
+{f:"Le café est ___.",z:"咖啡是热的。",a:"chaud",p:"a",lv:"A1",tr:"b"},
+{f:"Il fait ___ aujourd’hui.",z:"今天天气很好。",a:"beau",p:"a",lv:"A1",tr:"b"},
+{f:"Excusez-moi, où est le ___ ?",z:"请问，大米在哪里？",a:"riz",p:"n",lv:"A1",tr:"g"},
+{f:"Je paie avec ma ___.",z:"我用我的卡付款。",a:"carte",p:"n",lv:"A1",tr:"g"},
+{f:"Un ___, s’il vous plaît.",z:"请给我一个袋子。",a:"sac",p:"n",lv:"A1",tr:"g"},
+{f:"Le supermarché est ___.",z:"超市开着。",a:"ouvert",p:"a",lv:"A1",tr:"g"},
+{f:"Je prends le ___ à huit heures.",z:"我八点坐公交车。",a:"bus",p:"n",lv:"A1",tr:"g"},
+{f:"La gare est dans la ___.",z:"火车站在城里。",a:"ville",p:"n",lv:"A1",tr:"g"},
+{f:"Je vais à la ___.",z:"我去药店。",a:"pharmacie",p:"n",lv:"A1",tr:"g"},
+{f:"___ , je voudrais un café.",z:"你好，我想要一杯咖啡。",a:"Bonjour",p:"i",lv:"A1",tr:"g"},
+{f:"Dieu nous ___.",z:"上帝爱我们。",a:"aime",p:"v",lv:"A1",tr:"s"},
+{f:"Je ___ le matin.",z:"我早上祷告。",a:"prie",p:"v",lv:"A1",tr:"s"},
+{f:"Nous allons à l’___ le dimanche.",z:"我们周日去教会。",a:"église",p:"n",lv:"A1",tr:"s"},
+{f:"Je lis la ___.",z:"我读圣经。",a:"Bible",p:"n",lv:"A1",tr:"s"},
+{f:"Le Seigneur ___ nos prières.",z:"主垂听我们的祷告。",a:"écoute",p:"v",lv:"A1",tr:"s"},
+{f:"Merci, mon ___ !",z:"谢谢你，我的神！",a:"Dieu",p:"n",lv:"A1",tr:"s"},
+{f:"Hier, j’ai ___ un film.",z:"昨天我看了一部电影。",a:"regardé",p:"v",lv:"A2",tr:"b"},
+{f:"Demain, nous ___ en France.",z:"明天我们去法国。",a:"irons",p:"v",lv:"A2",tr:"b"},
+{f:"Je peux ___ français.",z:"我会说法语。",a:"parler",p:"v",lv:"A2",tr:"b"},
+{f:"Elle ___ à l’école tous les jours.",z:"她每天去学校。",a:"va",p:"v",lv:"A2",tr:"b"},
+{f:"Nous avons ___ un bon restaurant.",z:"我们找到了一家好餐厅。",a:"trouvé",p:"v",lv:"A2",tr:"b"},
+{f:"Tu as ___ tes devoirs ?",z:"你做完作业了吗？",a:"fait",p:"v",lv:"A2",tr:"b"},
+{f:"Il faut ___ beaucoup d’eau.",z:"要多喝水。",a:"boire",p:"v",lv:"A2",tr:"b"},
+{f:"J’aimerais ___ un livre.",z:"我想读一本书。",a:"lire",p:"v",lv:"A2",tr:"b"},
+{f:"Je voudrais ___ un compte.",z:"我想开一个账户。",a:"ouvrir",p:"v",lv:"A2",tr:"g"},
+{f:"Voici mon ___ de domicile.",z:"这是我的住址证明。",a:"justificatif",p:"n",lv:"A2",tr:"g"},
+{f:"La carte SIM est ___.",z:"SIM 卡是免费的。",a:"gratuite",p:"a",lv:"A2",tr:"g"},
+{f:"Je n’ai pas de ___.",z:"我没有信号。",a:"réseau",p:"n",lv:"A2",tr:"g"},
+{f:"Vous devez ___ ce formulaire.",z:"您需要填写这张表。",a:"remplir",p:"v",lv:"A2",tr:"g"},
+{f:"Le colis ___ à la poste.",z:"包裹在邮局。",a:"est",p:"v",lv:"A2",tr:"g"},
+{f:"Il faut que nous ___ ensemble.",z:"我们要一起祷告。",a:"prions",p:"v",lv:"A2",tr:"s"},
+{f:"La parole de Dieu nous ___.",z:"神的话语引导我们。",a:"guide",p:"v",lv:"A2",tr:"s"},
+{f:"Je crois que Dieu est ___.",z:"我相信神是信实的。",a:"fidèle",p:"a",lv:"A2",tr:"s"},
+{f:"Nous chantons pour ___ le Seigneur.",z:"我们唱歌赞美主。",a:"louer",p:"v",lv:"A2",tr:"s"}
+];
+function sentPool(lv){
+  const tr=ld("frs_track",null);
+  // 方向存的是 general / spiritual / both，句子 tag 是 g / s / b：general 要 g+b，spiritual 要 s+b。
+  const ok=s=>!tr||tr==="both"||s.tr==="b"||(tr==="general"&&s.tr==="g")||(tr==="spiritual"&&s.tr==="s");
+  let pool=sh(SEN.filter(s=>ok(s)&&(lv==="mix"||s.lv===lv)));
+  if(pool.length<10){
+    const extra=sh(SEN.filter(s=>ok(s)&&pool.indexOf(s)<0));
+    pool=pool.concat(extra);
+  }
+  return pool.slice(0,10);
+}
+function sentDistractors(s){
+  const same=(w)=>pf(w).toLowerCase()!==s.a.toLowerCase();
+  let ds=sh(TW().filter(w=>w.lv===s.lv&&w.p===s.p&&same(w))).slice(0,3).map(w=>pf(w));
+  if(ds.length<3){
+    const more=sh(TW().filter(w=>w.lv===s.lv&&same(w)&&ds.indexOf(pf(w))<0)).slice(0,3-ds.length).map(w=>pf(w));
+    ds=ds.concat(more);
+  }
+  if(ds.length<3){
+    const more=sh(TW().filter(w=>same(w)&&ds.indexOf(pf(w))<0)).slice(0,3-ds.length).map(w=>pf(w));
+    ds=ds.concat(more);
+  }
+  return ds;
+}
+function sentMenu(){
+  show_("home");
+  $("home").innerHTML='<div class="card"><h3 style="margin:0 0 8px">💬 句子练习</h3>'
+    +'<p>把学过的单词放进句子里练：填空和选译文两种题型，每轮 10 句，答对 +10 XP。</p>'
+    +'<p class="sub">句子会按你选的学习方向出：日常方向是生活场景句，属灵方向是信仰生活句。</p>'
+    +'<button class="btn" data-lv="A1">A1 句子</button> '
+    +'<button class="btn" data-lv="A2">A2 句子</button> '
+    +'<button class="btn" data-lv="mix">混合 A1 + A2</button></div>';
+  document.querySelectorAll("#home [data-lv]").forEach(b=>{b.onclick=()=>sentStart(b.dataset.lv);});
+}
+let SQ=null;
+function sentStart(lv){
+  SQ={items:sentPool(lv).map(s=>({s:s,type:Math.random()<0.5?"f":"t"})),qi:0,score:0,lv:lv};
+  show_("home");
+  sentRender();
+}
+function sentRender(){
+  const it=SQ.items[SQ.qi];
+  if(!it){sentFinish();return;}
+  const s=it.s,full=s.f.replace("___",s.a);
+  let qhtml,opts,correctIdx;
+  if(it.type==="f"){
+    qhtml='<h3 style="margin:0 0 12px">'+esc(s.f.replace("___","______"))+'</h3><p class="sub">选一个词填进句子里：</p>';
+    opts=sh([s.a].concat(sentDistractors(s)));
+    correctIdx=opts.indexOf(s.a);
+  }else{
+    qhtml='<h3 style="margin:0 0 12px">'+esc(full)+' <button class="spk" id="sqHear" title="听发音">🔊</button></h3><p class="sub">这句话是什么意思？</p>';
+    let ds=sh(SQ.items.filter(o=>o.s!==s)).map(o=>o.s.z).slice(0,3);
+    if(ds.length<3){ds=ds.concat(sh(SEN.filter(o=>o!==s&&ds.indexOf(o.z)<0)).slice(0,3-ds.length).map(o=>o.z));}
+    opts=sh([s.z].concat(ds));
+    correctIdx=opts.indexOf(s.z);
+  }
+  let h='<div class="card"><p class="sub">句子练习 · 第 '+(SQ.qi+1)+' / '+SQ.items.length+' 题</p>'+qhtml;
+  h+=opts.map((o,idx)=>'<div class="opt-row"><button class="opt" data-o="'+idx+'">'+esc(o)+'</button></div>').join("");
+  h+='<div id="sqWhy" style="margin-top:12px"></div><button class="btn alt" id="sqNext" style="display:none;margin-top:10px">下一题 ▶</button></div>';
+  h+='<button class="btn alt" id="sqExit" style="margin-top:14px">退出练习</button>';
+  $("home").innerHTML=h;
+  const hear=$("sqHear");
+  if(hear){hear.onclick=()=>{try{if(typeof say==="function")say(full)}catch(e){}};}
+  $("sqExit").onclick=()=>home();
+  const obtns=document.querySelectorAll("#home [data-o]");
+  obtns.forEach(b=>{b.onclick=()=>{
+    if(b.disabled)return;
+    obtns.forEach(x=>{x.disabled=true});
+    const pick=+b.dataset.o,ok=pick===correctIdx;
+    if(ok){b.style.background="#d9f2dd";try{if(typeof gain==="function")gain(10)}catch(e){}SQ.score++;}
+    else{b.style.background="#fbd9d9";const right=obtns[correctIdx];if(right)right.style.background="#d9f2dd";}
+    $("sqWhy").innerHTML='<p style="margin:0"><b>'+(ok?"答对了！+10 XP":"答错了")+'</b><br>完整句子：'+esc(full)+'（'+esc(s.z)+'） <button class="spk" id="sqSay" title="听发音">🔊</button></p>';
+    const sb=$("sqSay");
+    if(sb){sb.onclick=()=>{try{if(typeof say==="function")say(full)}catch(e){}};}
+    const nx=$("sqNext");nx.style.display="";nx.onclick=()=>{SQ.qi++;sentRender();};
+  }});
+}
+function sentFinish(){
+  show_("home");
+  $("home").innerHTML='<div class="card"><img src="'+(YUKI_STICKERS.trophy||YUKI_STICKERS.bravo)+'" alt="Yuki" style="width:120px;height:120px;object-fit:contain">'
+    +'<h3 style="margin:8px 0">🎉 本轮完成！答对 '+SQ.score+' / '+SQ.items.length+' 句</h3>'
+    +'<p class="sub">把单词放进句子里，才是真的会用。Yuki 为你骄傲！</p>'
+    +'<button class="btn" id="sqAgain">再来一轮</button> <button class="btn alt" id="sqHome" style="margin-left:0">回首页</button></div>';
+  $("sqAgain").onclick=()=>sentStart(SQ.lv);
+  $("sqHome").onclick=()=>home();
+}
+(function(){
+  // 首页加一个句子练习入口（只在真正的主页模块列表上出现，不在选方向/小测介绍页上）。
+  const _homeSent=home;
+  home=function(){
+    _homeSent();
+    try{
+      if((typeof getTrack==="function"?getTrack():null)==null)return;
+      const el=$("home");if(!el)return;
+      if(el.querySelector("#plStart")||el.querySelector("[data-sent-home]"))return;
+      if(!el.querySelector(".lv"))return;
+      const b=document.createElement("button");
+      b.className="lv";b.setAttribute("data-sent-home","1");
+      b.innerHTML='<div><b>💬</b>句子练习</div><span>把单词放进句子里练</span>';
+      b.onclick=()=>sentMenu();
+      el.appendChild(b);
+    }catch(e){}
+  };
+  // 词汇菜单里也可以进句子练习。
+  const _vocabMenuSent=vocabMenu;
+  vocabMenu=function(){
+    _vocabMenuSent();
+    try{
+      const el=$("home");if(!el||el.querySelector("[data-sent-vocab]"))return;
+      const b=document.createElement("button");
+      b.className="lv";b.setAttribute("data-sent-vocab","1");
+      b.innerHTML='<div><b>💬</b>句子练习</div><span>填空和选译文，每轮 10 句</span>';
+      b.onclick=()=>sentMenu();
+      el.appendChild(b);
+    }catch(e){}
+  };
+})();
+
+</script>
 </body>
 </html>
