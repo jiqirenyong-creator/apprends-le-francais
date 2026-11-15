@@ -1677,6 +1677,10 @@ function sentFinish(){
       el.appendChild(b);
     }catch(e){}
   };
+  // 刷新页面时，block 2 的初始化在后面的脚本块还没执行时就调过一次 home()，
+  // 那时各包装器还没装上，所以首页是没加料的素版。登录过的用户在这里再调一次 home()，
+  // 让学习方向卡片、目标卡片、情景对话、句子练习入口都补上；没登录时不动，免得清空昵称输入。
+  try{ if(typeof CUR!=="undefined"&&CUR) home(); }catch(e){}
 })();
 
 </script>
