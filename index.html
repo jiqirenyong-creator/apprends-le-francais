@@ -499,10 +499,111 @@ const RAW=`神|Dieu|n
 福音工作|travail d’évangélisation|p
 组长|chef d’équipe|p
 三书|Trois Déclarations|p
+你好|bonjour|i|A1
+再见|au revoir|i|A1
+谢谢|merci|i|A1
+请|s’il vous plaît|i|A1
+对不起|excusez-moi|i|A1
+是的|oui|i|A1
+不是|non|i|A1
+晚上好|bonsoir|i|A1
+晚安|bonne nuit|i|A1
+你好吗|comment allez-vous ?|i|A1
+一|un|num|A1
+二|deux|num|A1
+三|trois|num|A1
+四|quatre|num|A1
+五|cinq|num|A1
+六|six|num|A1
+七|sept|num|A1
+八|huit|num|A1
+九|neuf|num|A1
+十|dix|num|A1
+父亲|le père|n|A1
+母亲|la mère|n|A1
+哥哥/弟弟|le frère|n|A1
+姐姐/妹妹|la sœur|n|A1
+儿子|le fils|n|A1
+女儿|la fille|n|A1
+朋友（男）|un ami|n|A1
+朋友（女）|une amie|n|A1
+孩子|un enfant|n|A1
+人|une personne|n|A1
+男人|un homme|n|A1
+女人|une femme|n|A1
+老师|un professeur|n|A1
+学生|un élève|n|A1
+家|la maison|n|A1
+学校|une école|n|A1
+书|un livre|n|A1
+水|de l’eau|n|A1
+面包|le pain|n|A1
+牛奶|le lait|n|A1
+咖啡|le café|n|A1
+茶|le thé|n|A1
+苹果|une pomme|n|A1
+太阳|le soleil|n|A1
+月亮|la lune|n|A1
+白天|le jour|n|A1
+夜晚|la nuit|n|A1
+时间|le temps|n|A1
+手|la main|n|A1
+头|la tête|n|A1
+心|le cœur|n|A1
+爱|un amour|n|A1
+和平|la paix|n|A1
+喜乐|la joie|n|A1
+生命|la vie|n|A1
+信仰|la foi|n|A1
+教会|une église|n|A1
+圣经|la Bible|n|A1
+祷告|la prière|n|A1
+话语|la parole|n|A1
+红色的|rouge|a|A1
+蓝色的|bleu|a|A1
+绿色的|vert|a|A1
+白色的|blanc|a|A1
+黑色的|noir|a|A1
+黄色的|jaune|a|A1
+大的|grand|a|A1
+小的|petit|a|A1
+好的|bon|a|A1
+美丽的|beau|a|A1
+新的|nouveau|a|A1
+快乐的|heureux|a|A1
+重要的|important|a|A1
+容易的|facile|a|A1
+是|être|v|A1
+有|avoir|v|A1
+去|aller|v|A1
+做|faire|v|A1
+说|parler|v|A1
+爱（动词）|aimer|v|A1
+吃|manger|v|A1
+喝|boire|v|A1
+来|venir|v|A1
+看|voir|v|A1
+听|écouter|v|A1
+读|lire|v|A1
+写|écrire|v|A1
+学习|apprendre|v|A1
+工作|travailler|v|A1
+生活|vivre|v|A1
+祷告（动词）|prier|v|A1
+相信|croire|v|A1
+希望|espérer|v|A1
+感谢|remercier|v|A1
+我爱你|je t’aime|w|A1
+谢谢你|je te remercie|w|A1
+我叫玛丽|je m’appelle Marie|w|A1
+我住在巴黎|j’habite à Paris|w|A1
+我说法语|je parle français|w|A1
+神爱我们|Dieu nous aime|w|A1
+主与你同在|le Seigneur est avec toi|w|A1
 §MORE`;
-const POS={v:"动词",n:"名词",a:"形容词",p:"名词短语",w:"动词短语"};
+const POS={v:"动词",n:"名词",a:"形容词",p:"名词短语",w:"动词短语",i:"问候语",num:"数字"};
 const pf=w=>w.f.split(" / ")[0];
-const W=RAW.split("\n").filter(l=>l.includes("|")).map(l=>{const[z,f,p]=l.split("|");return{id:z+"|"+f.split(" / ")[0],z,f,p}});
+const W=RAW.split("\n").filter(l=>l.includes("|")).map(l=>{const[z,f,p,lv2]=l.split("|");return{id:z+"|"+f.split(" / ")[0],z,f,p,lv2:lv2||null}});
 const EASY=new Set(["dieu","jésus","satan","péché","nature","raison","loi","vie","justice","juste"]);
 const STOP=/^(le|la|les|l|de|du|des|d|à|en|un|une|mon|ma|se|s|qqn|qch|et)$/i;
 const words=f=>f.replace(/\([^)]*\)/g," ").replace(/[’']/g," ").split(/[\s,-]+/).filter(x=>x&&!STOP.test(x));
@@ -529,7 +630,7 @@ const alts=f=>f.split(" / ").flatMap(a=>[a,a.replace(/\s*\([^)]*\)\s*/g," ").tri
 let PX="",SP=null;
 const ld=(k,d)=>{try{const v=localStorage.getItem(PX+k);return v?JSON.parse(v):d}catch(e){return d}};
 const sv=(k,v)=>{try{localStorage.setItem(PX+k,JSON.stringify(v))}catch(e){}};
-W.forEach(w=>w.lv=lvl(w));
+W.forEach(w=>w.lv=w.lv2||lvl(w));
 const LV=["A1","A2","B1","B2","C1","C2"];
 let S={};
 const show_=id=>["home","play","end","list"].forEach(i=>$(i).classList.toggle("hidden",i!==id));
@@ -617,7 +718,30 @@ function run(title,items,render,saved=null){let i=Math.min(saved?.i||0,items.len
   if(spk){$("r").innerHTML=`<div class="fb">💬 ${it.z}<br><button class="spk" id="s2">🔊 读出回复并跟读</button></div>`;$("s2").onclick=()=>say(it.a)}else $("r").replaceChildren(grammarFeedback(it,b.textContent));done(b.textContent===it.a,b.textContent)})}
 const R=[["Je crois en Dieu.","我相信神。"],["Nous servons Dieu avec foi.","我们怀着信心事奉神。"],["La vérité est dans la parole de Dieu.","真理在神的话语里。"],["Il faut craindre Dieu et s’éloigner du mal.","要敬畏神远离恶。"],["Je veux accomplir mon devoir.","我想尽我的本分。"],["Le Seigneur est miséricordieux.","主是满有怜悯的。"],["Merci pour votre patience.","谢谢您的耐心。"],["Pouvez-vous répéter, s’il vous plaît ?","请您重复一遍好吗？"]];
 const D=[["Bonjour, comment allez-vous ?","Très bien, merci. Et vous ?",["Je m’appelle Marie.","Au revoir !","J’ai vingt ans."],"您好吗？→ 很好，谢谢。您呢？"],["Pourquoi crois-tu en Dieu ?","Parce que Sa parole est vraie.",["Parce qu’il pleut demain.","Je suis allé au marché.","Non, merci."],"你为什么相信神？→ 因为他的话是真的。"],["Veux-tu venir à la réunion ?","Oui, j’arrive tout de suite.",["Il fait très chaud.","Je mange une pomme.","Hier, oui."],"你来聚会吗？→ 来，马上到。"],["Comment accomplis-tu ton devoir ?","Je prie et je fais de mon mieux.",["Je suis très grand.","Il est sept heures.","C’est mon chat."],"你怎么尽本分？→ 我祈祷并尽力而为。"],["Peux-tu répéter, s’il te plaît ?","Bien sûr, je répète lentement.",["Je ne sais pas nager.","Voici ma maison.","Bonne nuit, à demain."],"能重复一下吗？→ 当然，我慢慢说。"]];
-const G=[{t:"b",f:"Je sers Dieu avec foi.",z:"我怀着信心事奉神。"},{t:"b",f:"Nous devons craindre Dieu.",z:"我们应当敬畏神。"},{t:"b",f:"Il faut que tu sois honnête.",z:"你必须诚实。"},{t:"b",f:"Elle est allée à la réunion.",z:"她去参加了聚会。"},
+const G=[{t:"b",f:"Je m’appelle Marie.",z:"我叫玛丽。（s’appeler：je m’appelle）"},
+{t:"b",f:"J’habite à Paris.",z:"我住在巴黎。（habiter：j’habite）"},
+{t:"b",f:"Je parle français.",z:"我说（讲）法语。（parler：je parle）"},
+{t:"b",f:"Dieu nous aime.",z:"神爱我们。（aimer：Dieu nous aime）"},
+{t:"b",f:"Je prie tous les jours.",z:"我每天祷告。（prier：je prie）"},
+{t:"b",f:"Merci beaucoup.",z:"非常感谢。（merci beaucoup）"},
+{t:"b",f:"La paix est avec vous.",z:"愿平安与你们同在。（la paix 是阴性名词）"},
+{t:"b",f:"Nous aimons Dieu.",z:"我们爱神。（aimer：nous aimons）"},
+{t:"c",q:"Je ___ étudiant. (être)",a:"suis",o:["es", "est", "sommes"],z:"être 现在时：je suis, tu es, il est, nous sommes。"},
+{t:"c",q:"Tu ___ un livre. (avoir)",a:"as",o:["ai", "a", "avons"],z:"avoir 现在时：j’ai, tu as, il a, nous avons。"},
+{t:"c",q:"Il ___ à Paris. (habiter)",a:"habite",o:["habites", "habitons", "habiter"],z:"habiter 是第一组 -er 动词：il habite à Paris（他住在巴黎）。"},
+{t:"c",q:"Nous ___ le français. (parler)",a:"parlons",o:["parlez", "parlent", "parle"],z:"-er 动词现在时：nous + -ons：nous parlons。"},
+{t:"c",q:"Elle ___ une pomme. (manger)",a:"mange",o:["manges", "mangeons", "manger"],z:"manger 现在时：elle mange une pomme（她吃一个苹果）。"},
+{t:"c",q:"___ pomme est rouge.",a:"La",o:["Le", "Les", "Un"],z:"pomme 是阴性单数名词，定冠词用 la：la pomme est rouge。"},
+{t:"c",q:"Je ne ___ pas de café. (boire)",a:"bois",o:["boit", "buvons", "boire"],z:"否定结构 ne … pas；boire 现在时 je bois。"},
+{t:"c",q:"___-tu français ? (parler)",a:"Parles",o:["Parle", "Parlez", "Parler"],z:"主谓倒装疑问句：parler 现在时 tu parles，倒装后写作 Parles-tu … ?"},
+{t:"c",q:"Nous ___ à l’école demain. (aller)",a:"allons",o:["allez", "vont", "aller"],z:"aller 现在时：nous allons；demain 表示明天，句子说的是明天的安排。"},
+{t:"c",q:"Ma sœur est ___. (petit)",a:"petite",o:["petit", "petits", "petites"],z:"形容词要与名词性数配合：sœur 是阴性单数，petit → petite。"},
+{t:"c",q:"Les enfants ___ dans le jardin. (jouer)",a:"jouent",o:["joue", "jouons", "jouez"],z:"jouer 现在时：les enfants 是复数，动词用 jouent。"},
+{t:"c",q:"Tu ___ à l’église le dimanche. (aller)",a:"vas",o:["va", "allez", "aller"],z:"aller 现在时：tu vas；le dimanche 表示每个星期天。"},
+{t:"c",q:"“Je suis étudiant.” 用的是什么时态？",a:"现在时",o:["复合过去时", "简单将来时", "未完成过去时"],z:"suis 是 être 的现在时，表示现在的身份。"},
+{t:"c",q:"“Je ne parle pas anglais.” 是什么结构？",a:"否定句 ne … pas",o:["疑问句", "被动语态", "条件句"],z:"ne + 动词 + pas 构成否定：je ne parle pas。"},
+{t:"c",q:"“Est-ce que tu parles français ?” 是什么句型？",a:"疑问句",o:["陈述句", "否定句", "祈使句"],z:"est-ce que + 陈述语序构成疑问句：Est-ce que tu parles français ?"},
+{t:"b",f:"Je sers Dieu avec foi.",z:"我怀着信心事奉神。"},{t:"b",f:"Nous devons craindre Dieu.",z:"我们应当敬畏神。"},{t:"b",f:"Il faut que tu sois honnête.",z:"你必须诚实。"},{t:"b",f:"Elle est allée à la réunion.",z:"她去参加了聚会。"},
 {t:"c",q:"Je ___ en Dieu. (croire)",a:"crois",o:["croyons","croit","croire"],z:"croire 现在时：je crois, nous croyons, il croit。"},{t:"c",q:"Il faut que tu ___ patient.",a:"sois",o:["es","seras","étais"],z:"il faut que + 虚拟式：être → sois。"},{t:"c",q:"Elle ___ allée à l’église.",a:"est",o:["a","était","sera"],z:"aller 的复合过去时用 être：elle est allée。"},{t:"c",q:"C’est le livre ___ je t’ai parlé.",a:"dont",o:["que","qui","où"],z:"parler de qqch → 关系代词 dont。"},{t:"c",q:"Nous ___ la vérité depuis longtemps. (chercher)",a:"cherchons",o:["cherchez","cherchent","cherche"],z:"nous → -ons：nous cherchons。"},
 {t:"c",q:"“Hier, nous avons prié.” 用的是什么时态？",a:"复合过去时",o:["现在时","简单将来时","未完成过去时"],z:"avoir + 过去分词（prié）= 复合过去时。"},{t:"c",q:"“Si j’avais la foi, je prierais.” 这是哪种结构？",a:"si + 未完成过去时 → 条件式",o:["si + 现在时 → 将来时","虚拟式从句","被动语态"],z:"与现在相反的假设：si + imparfait, conditionnel。"},
 {t:"b",f:"Il suffit de regarder le monde aujourd’hui.",z:"只要看看今天的世界就够了。（il suffit de + 不定式）"},
@@ -654,7 +778,22 @@ const G=[{t:"b",f:"Je sers Dieu avec foi.",z:"我怀着信心事奉神。"},{t:"
 {t:"c",q:"Elle a continué à travailler ___ écoutant la réunion.",a:"en",o:["à","de","pour"],z:"进阶：en + 现在分词构成副动词，常表示同时发生或方式。"}
 ];
 G.slice(-12).forEach(x=>x.level="advanced");
-const G_HELP={
+const G_HELP={"Elle ___ une pomme. (manger)":{when:"-er 动词现在时：elle 在词干后加 -e；manger 的词干是 mang-，加 e 后写作 mange。",correct:"主语 elle 对应 mange：elle mange une pomme（她吃一个苹果）。",wrong:{"mangeons":"这是 nous 的现在时形式。","manger":"这是不定式，不能直接作谓语。","manges":"这是 tu 的现在时形式。"}},
+"Il ___ à Paris. (habiter)":{when:"-er 动词现在时：il/elle/on 在词干后加 -e。",correct:"habiter 是第一组 -er 动词，il 对应 habite：il habite à Paris。",wrong:{"habiter":"这是不定式，前面没有能支配它的动词。","habites":"这是 tu 的现在时形式。","habitons":"这是 nous 的现在时形式。"}},
+"Je ___ étudiant. (être)":{when:"être 是最常用的动词之一；一般现在时用于现在的事实、身份和状态。",correct:"主语 je 对应 suis：je suis étudiant（我是一名学生）。",wrong:{"es":"这是 tu 的现在时形式。","est":"这是 il/elle/on 的现在时形式。","sommes":"这是 nous 的现在时形式。"}},
+"Je ne ___ pas de café. (boire)":{when:"否定句用 ne … pas 把动词夹在中间；boire 是不规则动词。",correct:"boire 现在时 je bois：je ne bois pas de café（我不喝咖啡）。",wrong:{"boire":"这是不定式，不能直接作谓语。","boit":"这是 il/elle/on 的现在时形式。","buvons":"这是 nous 的现在时形式。"}},
+"Les enfants ___ dans le jardin. (jouer)":{when:"-er 动词现在时：ils/elles 在词干后加 -ent。",correct:"主语 les enfants 是复数，jouer 现在时用 jouent：les enfants jouent dans le jardin（孩子们在花园里玩）。",wrong:{"joue":"这是 je/il/elle/on 的现在时形式。","jouez":"这是 vous 的现在时形式。","jouons":"这是 nous 的现在时形式。"}},
+"Ma sœur est ___. (petit)":{when:"形容词要和它修饰的名词性数一致：阴性单数通常在阳性形式后加 e。",correct:"sœur 是阴性单数，petit 要变成 petite：ma sœur est petite（我姐姐很小/很矮）。",wrong:{"petit":"这是阳性单数形式；sœur 是阴性。","petites":"这是阴性复数形式；sœur 只有一个。","petits":"这是阳性复数形式。"}},
+"Nous ___ le français. (parler)":{when:"-er 动词现在时：nous 在词干后加 -ons。",correct:"主语 nous 对应 parlons：nous parlons le français（我们说法语）。",wrong:{"parle":"这是 je/il/elle/on 的现在时形式。","parlent":"这是 ils/elles 的现在时形式。","parlez":"这是 vous 的现在时形式。"}},
+"Nous ___ à l’école demain. (aller)":{when:"aller 是不规则动词：je vais, tu vas, il va, nous allons, vous allez, ils vont。",correct:"aller 现在时 nous allons：nous allons à l’école demain（我们明天去学校）。",wrong:{"aller":"这是不定式，不能直接作谓语。","allez":"这是 vous 的现在时形式。","vont":"这是 ils/elles 的现在时形式。"}},
+"Tu ___ un livre. (avoir)":{when:"avoir 表示“有”；一般现在时用于现在拥有的东西。",correct:"主语 tu 对应 as：tu as un livre（你有一本书）。",wrong:{"a":"这是 il/elle/on 的现在时形式。","ai":"这是 je 的现在时形式。","avons":"这是 nous 的现在时形式。"}},
+"Tu ___ à l’église le dimanche. (aller)":{when:"aller 是不规则动词；tu 对应的形式是 vas。",correct:"aller 现在时 tu vas：tu vas à l’église le dimanche（你每个星期天去教会）。",wrong:{"aller":"这是不定式，不能直接作谓语。","allez":"这是 vous 的现在时形式。","va":"这是 il/elle/on 的现在时形式。"}},
+"___ pomme est rouge.":{when:"定冠词要和名词的性数一致：阳性单数用 le，阴性单数用 la，复数用 les。",correct:"pomme 是阴性单数名词，定冠词用 la：la pomme est rouge（这个苹果是红色的）。",wrong:{"Le":"le 是阳性单数定冠词；pomme 是阴性。","Les":"les 是复数定冠词；这里 pomme 是单数。","Un":"un 是阳性单数不定冠词；pomme 是阴性，应该用 une。"}},
+"___-tu français ? (parler)":{when:"倒装疑问句把动词放在主语前面；tu 对应的形式是 parles。",correct:"主谓倒装疑问句：Parles-tu français ?（你说法语吗？）",wrong:{"Parle":"这是 je/il/elle/on 的形式；tu 需要 parles。","Parler":"这是不定式，不能作疑问句的谓语。","Parlez":"这是 vous 的形式；题目主语是 tu。"}},
+"“Est-ce que tu parles français ?” 是什么句型？":{when:"est-ce que 是最常用的构成疑问句的方式之一，后面直接跟陈述语序。",correct:"est-ce que + 陈述语序构成疑问句：Est-ce que tu parles français ?（你说法语吗？）",wrong:{"否定句":"否定句会用 ne … pas；本句没有否定。","祈使句":"祈使句是命令或请求，如 Parle !；本句是提问。","陈述句":"陈述句直接陈述事实，不提问；本句以问号结尾，在问对方。"}},
+"“Je ne parle pas anglais.” 是什么结构？":{when:"法语否定句通常把 ne … pas 放在变位动词两边。",correct:"ne + 动词 + pas 构成否定：je ne parle pas（我不说）。",wrong:{"条件句":"条件句通常有 si 从句；本句没有。","疑问句":"疑问句会用倒装、est-ce que 或升调提问；本句是陈述否定。","被动语态":"被动语态通常由 être + 过去分词构成；本句没有。"}},
+"“Je suis étudiant.” 用的是什么时态？":{when:"现在时用于现在的事实、身份、习惯和普遍真理。",correct:"suis 是 être 的现在时，表示现在的身份。",wrong:{"复合过去时":"复合过去时由 avoir/être 的现在时 + 过去分词构成，叙述已完成的过去事件；suis 后面没有过去分词。","未完成过去时":"未完成过去时常描写过去背景或习惯；suis 是现在时。","简单将来时":"简单将来时表达之后会发生的事；suis 是现在时。"}},
+
 "Je ___ en Dieu. (croire)":{when:"croire 是不规则动词；一般现在时用于现在的信念、事实和习惯。",correct:"主语 je 对应 crois：je crois en Dieu（我相信神）。",wrong:{"croyons":"这是 nous 的现在时形式。","croit":"这是 il/elle/on 的现在时形式。","croire":"这是不定式，前面没有能支配它的动词。"}},
 "Il faut que tu ___ patient.":{when:"il faut que 表示“必须/有必要”，后面的从句通常用虚拟式，因为它表达要求而非单纯陈述事实。",correct:"être 的虚拟式现在时 tu sois：Il faut que tu sois patient。",wrong:{"es":"这是直陈式现在时；il faut que 后需要虚拟式。","seras":"这是简单将来时，不符合 il faut que 的语气要求。","étais":"这是直陈式未完成过去时，也不是此处要求的虚拟式。"}},
 "Elle ___ allée à l’église.":{when:"复合过去时用于叙述已完成的过去事件；aller 属于用 être 作助动词的一组动词。",correct:"elle est allée：être 的现在时 est + 过去分词 allée。主语 elle 为阴性单数，过去分词加 e。",wrong:{"a":"aller 不用 avoir 构成这里的复合过去时。","était":"这是 être 的未完成过去时，可表示过去状态/背景；题目需要已完成事件的复合过去时。","sera":"这是将来时，时间不合。"}},
@@ -689,7 +828,15 @@ const G_HELP={
 "Le sujet ___ nous discutons est important.":{when:"关系代词连接名词和后面的从句；要看从句中的动词/形容词要求什么介词。",correct:"discuter de quelque chose（讨论某事），de + 先行词用 dont 代替：le sujet dont nous discutons。",wrong:{"que":"que 代替直接宾语；这里 discuter 后面需要 de。","qui":"qui 在从句中作主语；本句主语是 nous。","où":"où 通常代替地点或时间；sujet 不是地点/时间。"}},
 "Elle a continué à travailler ___ écoutant la réunion.":{when:"en + 现在分词构成副动词（gérondif），表示两个动作同时进行，或说明做事方式。",correct:"en écoutant = 一边听一边工作。结构是 en + écoutant。",wrong:{"à":"à 不能直接引出现在分词 écoutant 来表达同时发生。","de":"de 后通常接名词或不定式，不构成这里的副动词。","pour":"pour + 不定式通常表示目的；这里题目表达的是同时进行的两个动作。"}}
 };
-const G_SENTENCE_HELP={
+const G_SENTENCE_HELP={"Dieu nous aime.":{when:"宾语代词通常放在变位动词前：Dieu nous aime。",correct:"aimer 的现在时第三人称单数 aime；nous 是直接宾语“我们”，放在动词前。"},
+"Je m’appelle Marie.":{when:"介绍自己的名字时用法语说 Je m’appelle + 名字。",correct:"je + s’appeler 的现在时第一人称单数 m’appelle；Marie 是名字。"},
+"Je parle français.":{when:"说会哪种语言时用 parler + 语言名称。",correct:"parler 的现在时第一人称单数 parle；français 在这里指法语，不加冠词。"},
+"Je prie tous les jours.":{when:"说习惯、每天做的事时用现在时。",correct:"prier 的现在时第一人称单数 prie；tous les jours 表示“每天”。"},
+"J’habite à Paris.":{when:"说住在哪里时用 habiter à + 地点。",correct:"habiter 的现在时第一人称单数 habite；à Paris 表示“在巴黎”。"},
+"La paix est avec vous.":{when:"这是一句祝福语，意思是“愿平安与你们同在”。",correct:"la paix 是阴性名词；être 的现在时第三人称单数 est；avec vous 表示“与你们同在”。"},
+"Merci beaucoup.":{when:"表示感谢时说 merci；想更客气时加上 beaucoup。",correct:"merci 表示“谢谢”，beaucoup 加强语气，意思是“非常感谢”。"},
+"Nous aimons Dieu.":{when:"-er 动词现在时：nous 在词干后加 -ons。",correct:"aimer 的现在时第一人称复数 aimons；nous aimons Dieu（我们爱神）。"},
+
 "Je sers Dieu avec foi.":{when:"现在时表达当前事实、习惯或一般陈述。",correct:"je + servir 的现在时第一人称单数 ser(v)s → sers；avec foi 是方式补语，表示“怀着信心”。"},
 "Nous devons craindre Dieu.":{when:"devoir + 不定式表示义务、应该做某事。",correct:"主语 nous 对应 devoir 的现在时 devons；第二个动词 craindre 保持不定式，不能再按主语变位。"},
 "Il faut que tu sois honnête.":{when:"il faut que 表示要求/必要性，que 引出的从句用虚拟式。",correct:"être 的 tu 虚拟式是 sois，因此说 il faut que tu sois honnête；不能用直陈式 es。"},
