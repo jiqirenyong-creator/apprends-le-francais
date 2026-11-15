@@ -1371,5 +1371,144 @@ setTrack=function(tr){const r=_setTrackDuo(tr);try{applyTitle()}catch(e){}return
 try{applyTitle()}catch(e){}
 
 </script>
+<script>
+// 入学小测：10 道题，约 3 分钟，按分数定级并解锁前面的级别。
+// 0–3 分 → A1 从头开始；4–6 分 → A2（A1 全部解锁）；7–10 分 → B1（A1、A2 全部解锁）。
+// 前 3 道是词汇选择题，从当前学习方向的词库里出（日常 / 属灵 / 两者都要都适用）；
+// 后 7 道是固定的语法填空题，难度从 A1 到 B1 递进。
+const PLACE_FIXED=[
+{q:"选出正确的词填空：___ pomme est rouge.（这个苹果是红的。）",opts:["Le","La","Les","Un"],a:1,why:"pomme（苹果）是阴性名词，所以用 la：la pomme。"},
+{q:"选出正确的词填空：Je ___ étudiant.（我是一名学生。）",opts:["es","est","suis","sommes"],a:2,why:"je 后面 être（是）要用 suis：je suis étudiant。"},
+{q:"选出正确的词填空：Je ___ aime pas le café.（我不喜欢咖啡。）",opts:["ne","n’","pas","non"],a:1,why:"否定结构是 ne…pas，aime 以元音开头，ne 要变成 n’：Je n’aime pas le café。"},
+{q:"选出正确的词填空：Nous ___ au supermarché.（我们去超市。）",opts:["vais","vas","allons","allez"],a:2,why:"nous 后面 aller（去）要用 allons：nous allons。"},
+{q:"选出正确的词填空：Hier, je ___ un film.（昨天，我看了一部电影。）",opts:["ai regardé","regarde","regarder","regardais"],a:0,why:"hier（昨天）是过去的时间，用复合过去时：ai regardé。"},
+{q:"选出正确的词填空：Si j’avais le temps, je ___ en France.（如果我有时间，我就去法国。）",opts:["voyage","voyagerai","voyagerais","voyageais"],a:2,why:"si + 未完成过去时，后面用条件式：je voyagerais。"},
+{q:"选出正确的词填空：Il faut que tu ___ à l’heure.（你必须准时来。）",opts:["viens","venir","viennes","viendras"],a:2,why:"Il faut que 后面要用虚拟式：que tu viennes。"}
+];
+function placeBuild(){
+  const qs=[];
+  function vocabQ(pool){
+    const w=pool[0];
+    const ds=sh(pool.filter(o=>o.id!==w.id)).slice(0,3);
+    const opts=sh([w].concat(ds)).map(o=>o.z);
+    return {q:"« "+pf(w)+" » 是什么意思？",opts:opts,a:opts.indexOf(w.z),why:"« "+pf(w)+" » 的意思是 "+w.z+"。"};
+  }
+  const a1=sh(TW().filter(w=>w.lv==="A1"));
+  const a2=sh(TW().filter(w=>w.lv==="A2"));
+  qs.push(vocabQ(a1));
+  qs.push(vocabQ(a1.slice(1)));
+  qs.push(vocabQ(a2));
+  PLACE_FIXED.forEach(q=>qs.push(q));
+  return qs;
+}
+function placeLevel(score){return score<=3?"A1":score<=6?"A2":"B1"}
+function placeApply(level,score){
+  const order=["A1","A2","B1","B2","C1","C2"];
+  const idx=order.indexOf(level);
+  const sg=ld("frs_st",{});
+  for(let li=0;li<idx;li++){
+    const k=order[li],n=Math.ceil(TW().filter(w=>w.lv===k).length/10);
+    for(let j=1;j<=n;j++){const key=k+"-"+j;if(!sg[key])sg[key]={p:1,s:0,b:0};}
+  }
+  sv("frs_st",sg);
+  try{sv("frs_placed",{level:level,score:score,date:duoToday()})}catch(e){}
+}
+function placeIntro(retake){
+  show_("home");
+  let h='<div class="card"><h3 style="margin:0 0 8px">📝 入学小测</h3>'
+    +'<p>10 道题，大约 3 分钟，测测你的法语水平，帮你跳到合适的级别开始。不用紧张，答错也没关系！</p>'
+    +'<p class="sub">0–3 分 → A1 从头开始 · 4–6 分 → A2 · 7–10 分 → B1</p>'
+    +'<button class="btn" id="plStart">开始测试</button> '
+    +'<button class="btn alt" id="plSkip" style="margin-left:0">'+(retake?"返回":"不用了，从 A1 开始")+'</button></div>';
+  $("home").innerHTML=h;
+  $("plStart").onclick=()=>placeStart();
+  $("plSkip").onclick=()=>{
+    if(retake){home();return;}
+    try{sv("frs_placed",{level:"A1",score:null,skipped:true,date:duoToday()})}catch(e){}
+    home();
+  };
+}
+let PQ=null;
+function placeStart(){
+  PQ={qs:placeBuild(),qi:0,score:0};
+  show_("home");
+  placeRender();
+}
+function placeRender(){
+  const q=PQ.qs[PQ.qi];
+  if(!q){placeFinish();return;}
+  let h='<div class="card"><p class="sub">入学小测 · 第 '+(PQ.qi+1)+' / '+PQ.qs.length+' 题</p><h3 style="margin:0 0 12px">'+esc(q.q)+'</h3>';
+  h+=q.opts.map((o,idx)=>'<div class="opt-row"><button class="opt" data-o="'+idx+'">'+esc(o)+'</button></div>').join("");
+  h+='<div id="pqWhy" style="margin-top:12px"></div><button class="btn alt" id="pqNext" style="display:none;margin-top:10px">下一题 ▶</button></div>';
+  h+='<button class="btn alt" id="pqExit" style="margin-top:14px">退出测试</button>';
+  $("home").innerHTML=h;
+  $("pqExit").onclick=()=>home();
+  const opts=document.querySelectorAll("#home [data-o]");
+  opts.forEach(b=>{b.onclick=()=>{
+    if(b.disabled)return;
+    opts.forEach(x=>{x.disabled=true});
+    const pick=+b.dataset.o,ok=pick===q.a;
+    if(ok){b.style.background="#d9f2dd";try{if(typeof gain==="function")gain(10)}catch(e){}PQ.score++;}
+    else{b.style.background="#fbd9d9";const right=opts[q.a];if(right)right.style.background="#d9f2dd";}
+    $("pqWhy").innerHTML='<p style="margin:0"><b>'+(ok?"答对了！+10 XP":"答错了")+'</b><br>'+esc(q.why)+'</p>';
+    const nx=$("pqNext");nx.style.display="";nx.onclick=()=>{PQ.qi++;placeRender();};
+  }});
+}
+function placeFinish(){
+  const sc=PQ.score,level=placeLevel(sc);
+  placeApply(level,sc);
+  const msg=level==="A1"?"从 A1 第 1 关开始，Yuki 陪你一步一步来！":level==="A2"?"A1 已经帮你解锁了，直接从 A2 开始吧！":"很厉害！A1、A2 都解锁了，从 B1 开始挑战吧！";
+  show_("home");
+  $("home").innerHTML='<div class="card"><img src="'+(YUKI_STICKERS.trophy||YUKI_STICKERS.bravo)+'" alt="Yuki" style="width:120px;height:120px;object-fit:contain">'
+    +'<h3 style="margin:8px 0">🎉 测试完成！答对 '+sc+' / '+PQ.qs.length+' 题</h3>'
+    +'<p><b>你的起点：'+level+'</b></p><p class="sub">'+msg+'</p>'
+    +'<button class="btn" id="plGo">开始学习</button> <button class="btn alt" id="plHome" style="margin-left:0">回首页</button></div>';
+  $("plGo").onclick=()=>stageMap(level);
+  $("plHome").onclick=()=>home();
+}
+(function(){
+  // 新用户：选完方向、还没测过、也还没通关任何一关时，打开首页先出现小测入口。
+  const _homePlace=home;
+  home=function(){
+    _homePlace();
+    try{
+      if(typeof CUR==="undefined"||!CUR)return;
+      if((typeof getTrack==="function"?getTrack():null)==null)return;
+      if(ld("frs_placed",null)!==null)return;
+      const sg=ld("frs_st",{});
+      if(Object.keys(sg).some(k=>sg[k]&&sg[k].p))return;
+      placeIntro(false);
+    }catch(e){}
+  };
+  // 词汇菜单里也可以随时重测。
+  const _vocabMenuPlace=vocabMenu;
+  vocabMenu=function(){
+    _vocabMenuPlace();
+    try{
+      const el=$("home");if(!el||el.querySelector("[data-place-vocab]"))return;
+      const b=document.createElement("button");
+      b.className="lv";b.setAttribute("data-place-vocab","1");
+      b.innerHTML='<div><b>📝</b>入学小测</div><span>10 道题，测测你的起点</span>';
+      b.onclick=()=>placeIntro(true);
+      el.appendChild(b);
+    }catch(e){}
+  };
+  // “我的”页底部加一个重测入口。
+  const _mePlace=me;
+  me=function(){
+    _mePlace();
+    try{
+      const el=$("home");if(!el||el.querySelector("[data-place-me]"))return;
+      const b=document.createElement("button");
+      b.className="btn alt";b.setAttribute("data-place-me","1");
+      b.style.cssText="margin-top:14px";
+      b.textContent="📝 重新做入学小测";
+      b.onclick=()=>placeIntro(true);
+      el.appendChild(b);
+    }catch(e){}
+  };
+})();
+
+</script>
 </body>
 </html>
