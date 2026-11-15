@@ -1037,5 +1037,179 @@ function showTrackPicker(onDone){
 })();
 
 </script>
+<script>
+// 情景对话（日常方向）：5 个生活场景，每个带关键词、一段对话和小测验。
+// 对话为原创 A1/A2 水平写法，参考了 francais facile 类网站的常见情景句型（超市、CAF、银行、手机店等），未复制其原文。
+// 只有法语才朗读，中文不朗读。场景只在日常法语和“两者都要”方向显示，属灵方向不显示。
+const SCEN=[
+{id:"marche",icon:"🛒",fr:"Au supermarché",zh:"超市购物",lv:"A1",
+words:[["le supermarché","超市"],["le rayon","货架区"],["la caisse","收银台"],["le panier","购物篮"],["le ticket de caisse","收银小票"],["la carte bancaire","银行卡"],["les courses","购物，买的东西"],["le prix","价格"],["un sac","袋子"],["la carte de fidélité","会员卡"]],
+dialog:[
+["Client","Bonjour, excusez-moi. Je cherche le riz. Où est-il, s’il vous plaît ?","你好，打扰一下，我找大米，请问在哪里？"],
+["Employé","Bonjour. Le riz est au rayon 7, avec les pâtes.","你好，大米在7号货架区，和意面在一起。"],
+["Client","Merci beaucoup. Et les œufs, ils sont où ?","非常感谢，鸡蛋在哪里？"],
+["Employé","Les œufs sont près du lait, au fond du magasin.","鸡蛋在牛奶旁边，在商店最里面。"],
+["Caissier","Bonjour ! Vous avez la carte de fidélité ?","你好！您有会员卡吗？"],
+["Client","Non, je ne l’ai pas. Ça fait combien, s’il vous plaît ?","没有，多少钱？"],
+["Caissier","Ça fait vingt-trois euros quarante. Par carte ou en espèces ?","一共23欧元40分，刷卡还是现金？"],
+["Client","Par carte, s’il vous plaît. Je peux avoir un sac ?","刷卡，谢谢，可以给我一个袋子吗？"]],
+quiz:[
+{q:"在超市找不到东西，你应该说什么？",opts:["Excusez-moi, je cherche le riz.","Ça fait combien ?","Je peux avoir un sac ?","Non, je ne l’ai pas."],a:0,why:"找不到东西时，先说 Excusez-moi（打扰一下），再说 je cherche…（我在找……）。"},
+{q:"收银员问 “Vous avez la carte de fidélité ?”，你没有，该怎么回答？",opts:["Oui, bien sûr.","Non, je ne l’ai pas.","Par carte, s’il vous plaît.","Merci beaucoup."],a:1,why:"没有会员卡就说 Non, je ne l’ai pas（我没有）。"},
+{q:"“Ça fait vingt-trois euros quarante.” 是什么意思？",opts:["一共23欧元40分","23号货架","40个鸡蛋","请排队"],a:0,why:"Ça fait… 是收银员说总价的说法，vingt-trois euros quarante 就是23欧元40分。"},
+{q:"付款时想刷卡，你说什么？",opts:["En espèces.","Par carte, s’il vous plaît.","Je cherche le riz.","Au revoir."],a:1,why:"Par carte 是刷卡，en espèces 是现金。"}]},
+{id:"caf",icon:"🏛️",fr:"À la CAF",zh:"办理 CAF",lv:"A2",
+words:[["la CAF","家庭补助金管理处"],["une allocation","补助金"],["l’allocation logement","住房补助"],["le loyer","房租"],["le bail","租房合同"],["un dossier","申请材料"],["un justificatif","证明材料"],["le justificatif de domicile","住址证明"],["le RIB","银行账户证明"],["un rendez-vous","预约"]],
+dialog:[
+["Usager","Bonjour, je voudrais faire une demande d’allocation logement.","你好，我想申请住房补助。"],
+["Conseiller","Bonjour. Vous avez un dossier ?","你好，您带申请材料了吗？"],
+["Usager","Oui, j’ai mon bail et mon RIB.","有，我带了租房合同和银行账户证明。"],
+["Conseiller","Très bien. Il faut aussi un justificatif de domicile.","很好，还需要一份住址证明。"],
+["Usager","C’est quoi, un justificatif de domicile ?","住址证明是什么？"],
+["Conseiller","C’est une facture d’électricité ou de téléphone, par exemple.","比如电费账单或电话账单。"],
+["Usager","D’accord. Je peux déposer le dossier aujourd’hui ?","好的，我今天可以提交材料吗？"],
+["Conseiller","Oui, et vous recevrez une réponse par courrier dans un mois.","可以，一个月内您会收到信件回复。"]],
+quiz:[
+{q:"想申请住房补助，法语怎么说？",opts:["Je voudrais faire une demande d’allocation logement.","Je cherche le riz.","Je peux avoir un sac ?","Ça fait combien ?"],a:0,why:"Je voudrais faire une demande de… 是“我想申请……”的说法。"},
+{q:"“un justificatif de domicile” 是什么？",opts:["住址证明","银行卡","租房合同","电话账单"],a:0,why:"住址证明就是证明你住在哪里的材料，电费账单或电话账单都可以当作住址证明。"},
+{q:"RIB 是什么？",opts:["银行账户证明","身份证件","住房补助","租房合同"],a:0,why:"RIB 是银行给的账户证明，上面有你的银行账号，办补助、领工资都要用到。"},
+{q:"“Vous recevrez une réponse par courrier” 是什么意思？",opts:["您会收到信件回复","请明天再来","材料不齐全","请先预约"],a:0,why:"Vous recevrez… 是将来时，意思是“您将会收到……”，par courrier 是“通过信件”。"}]},
+{id:"aides",icon:"🤝",fr:"À la mairie",zh:"办理福利",lv:"A2",
+words:[["la mairie","市政府"],["une aide","补助，帮助"],["le RSA","最低收入保障金"],["l’aide alimentaire","食品补助"],["le CCAS","社会行动中心"],["la situation","情况"],["le revenu","收入"],["un document","文件"],["une pièce d’identité","身份证件"],["gratuit","免费的"]],
+dialog:[
+["Usager","Bonjour, je voudrais savoir s’il y a des aides pour ma famille.","你好，我想了解一下有没有适合我家庭的补助。"],
+["Employé","Bonjour. Vous pouvez prendre rendez-vous avec le CCAS.","你好，您可以和 CCAS 预约。"],
+["Usager","C’est quoi, le CCAS ?","CCAS 是什么？"],
+["Employé","C’est le centre communal d’action sociale. Il aide les familles en difficulté.","是市镇社会行动中心，帮助有困难的家庭。"],
+["Usager","Je n’ai pas beaucoup de revenus en ce moment.","我目前收入不多。"],
+["Employé","Apportez vos documents : une pièce d’identité et un justificatif de revenus.","请带上您的文件：身份证件和收入证明。"],
+["Usager","D’accord, merci. Le rendez-vous est gratuit ?","好的，谢谢，预约是免费的吗？"],
+["Employé","Oui, c’est gratuit. À jeudi, à dix heures.","是的，免费，周四十点见。"]],
+quiz:[
+{q:"想问有没有适合家庭的补助，怎么说？",opts:["Je voudrais savoir s’il y a des aides pour ma famille.","Je cherche le riz.","Je voudrais ouvrir un compte.","Ça fait combien ?"],a:0,why:"Je voudrais savoir s’il y a… 是“我想知道有没有……”的说法。"},
+{q:"CCAS 是什么机构？",opts:["市镇社会行动中心","银行","超市","电话公司"],a:0,why:"CCAS 是 centre communal d’action sociale，帮助有困难的家庭。"},
+{q:"工作人员让你带什么文件？",opts:["身份证件和收入证明","银行卡和密码","租房合同和电费账单","手机和充电器"],a:0,why:"办补助一般要带 une pièce d’identité（身份证件）和 un justificatif de revenus（收入证明）。"},
+{q:"“C’est gratuit ?” 是在问什么？",opts:["是不是免费","几点开门","在哪里排队","要带什么"],a:0,why:"Gratuit 是“免费的”，C’est gratuit ? 就是在问“是免费的吗？”"}]},
+{id:"banque",icon:"🏦",fr:"À la banque",zh:"办理银行卡",lv:"A2",
+words:[["la banque","银行"],["un compte","账户"],["la carte bancaire","银行卡"],["le code secret","密码"],["le RIB","银行账户证明"],["un distributeur","自动取款机"],["un virement","转账"],["le solde","余额"],["une pièce d’identité","身份证件"],["le justificatif de domicile","住址证明"]],
+dialog:[
+["Client","Bonjour, je voudrais ouvrir un compte et avoir une carte bancaire.","你好，我想开一个账户，办一张银行卡。"],
+["Conseiller","Bonjour. Vous avez une pièce d’identité et un justificatif de domicile ?","你好，您有身份证件和住址证明吗？"],
+["Client","Oui, les voici.","有，在这里。"],
+["Conseiller","Parfait. Vous recevrez votre carte dans une semaine, par courrier.","很好，一周内您会通过信件收到银行卡。"],
+["Client","Et le code, comment je le reçois ?","密码怎么给我？"],
+["Conseiller","Vous le recevrez dans une autre lettre, pour votre sécurité.","为了安全，您会在另一封信里收到密码。"],
+["Client","D’accord. Je peux voir mon solde au distributeur ?","好的，我可以在自动取款机上查余额吗？"],
+["Conseiller","Oui, et aussi sur l’application de la banque.","可以，也可以在银行 App 上查。"]],
+quiz:[
+{q:"想开户办卡，怎么说？",opts:["Je voudrais ouvrir un compte et avoir une carte bancaire.","Je cherche le riz.","Je voudrais un forfait avec internet.","Ça fait combien ?"],a:0,why:"Ouvrir un compte 是开户，avoir une carte bancaire 是办一张银行卡。"},
+{q:"开户需要带什么？",opts:["身份证件和住址证明","手机和充电器","超市小票","学生证"],a:0,why:"银行开户一般要 une pièce d’identité（身份证件）和 un justificatif de domicile（住址证明）。"},
+{q:"银行卡和密码为什么分开寄？",opts:["为了安全","为了省钱","银行规定必须等一个月","密码要去柜台取"],a:0,why:"Pour votre sécurité（为了您的安全），卡和密码分开寄，丢了一封也不会被人直接用。"},
+{q:"“Je peux voir mon solde au distributeur ?” 是在问什么？",opts:["能不能在取款机上查余额","能不能取现金","能不能转账","几点关门"],a:0,why:"Le solde 是余额，un distributeur 是自动取款机，整句是在问能不能在取款机上查余额。"}]},
+{id:"telephone",icon:"📱",fr:"Au magasin de téléphone",zh:"手机店",lv:"A1",
+words:[["le téléphone portable","手机"],["un forfait","套餐"],["la carte SIM","SIM 卡"],["le réseau","网络，信号"],["la facture","账单"],["un abonnement","订阅，套餐"],["l’écran","屏幕"],["recharger","充值"],["le wifi","无线网络"],["un message","短信"]],
+dialog:[
+["Client","Bonjour, je voudrais un forfait avec internet.","你好，我想要一个带流量的套餐。"],
+["Vendeur","Bonjour. Combien de gigas voulez-vous ?","你好，您想要多少流量？"],
+["Client","Dix gigas, c’est bien pour moi.","10G 对我来说够了。"],
+["Vendeur","Ce forfait est à quinze euros par mois.","这个套餐每月15欧元。"],
+["Client","Et la carte SIM, elle est gratuite ?","SIM 卡是免费的吗？"],
+["Vendeur","Oui, la carte SIM est gratuite aujourd’hui.","是的，今天 SIM 卡免费。"],
+["Client","Mon téléphone n’a pas de réseau. Qu’est-ce que je fais ?","我的手机没有信号，我该怎么办？"],
+["Vendeur","Éteignez-le et rallumez-le. Si ça ne marche pas, revenez ici.","关机再开机，如果不行再回来。"]],
+quiz:[
+{q:"想办带流量的套餐，怎么说？",opts:["Je voudrais un forfait avec internet.","Je cherche le riz.","Je voudrais ouvrir un compte.","Ça fait combien ?"],a:0,why:"Un forfait avec internet 就是带流量的套餐。"},
+{q:"“Dix gigas, c’est bien pour moi.” 是什么意思？",opts:["10G 对我来说够了","手机坏了","要充10欧元","信号不好"],a:0,why:"C’est bien pour moi 是“对我来说够了、合适”，dix gigas 是10G流量。"},
+{q:"手机没有信号，店员让你先做什么？",opts:["关机再开机","换一张 SIM 卡","去银行","等一个月"],a:0,why:"Éteignez-le et rallumez-le 就是关机再开机，这是没信号时最先试的办法。"},
+{q:"“La carte SIM est gratuite” 是什么意思？",opts:["SIM 卡免费","SIM 卡坏了","要买新手机","流量用完了"],a:0,why:"Gratuit 是“免费的”，la carte SIM est gratuite 就是 SIM 卡免费。"}]}
+];
+function scenVisible(){try{const t=(typeof getTrack==="function"?getTrack():null);return t!=="spiritual"}catch(e){return true}}
+function scenDone(){try{return ld("frs_scen",{})}catch(e){return{}}}
+function scenMenu(){
+  const done=scenDone();
+  let h='<p class="sub">在真实的生活场景里学法语：先看关键词，再读对话，最后做小测验。点 🔊 只听法语发音。</p>';
+  const fns=SCEN.map((s,i)=>()=>scenView(i));
+  SCEN.forEach((s,i)=>{h+=mb(s.icon,s.fr+" · "+s.zh,s.lv+" · "+(done[s.id]?"✓ 已完成":"未完成"),i)});
+  sub("🎭 情景对话",h,fns);
+}
+function scenView(i){
+  const s=SCEN[i]; if(!s) return scenMenu();
+  show_("home");
+  let h='<button class="btn alt" id="scenBack" style="margin:0 0 10px">← 返回情景对话</button>';
+  h+='<h3 style="margin:0 0 6px">'+esc(s.fr)+' · '+esc(s.zh)+'</h3><p class="sub">'+s.lv+' · 点 🔊 只听法语发音</p>';
+  h+='<div class="card"><b>关键词</b>'+s.words.map(w=>'<div class="row"><div><b>'+esc(w[0])+'</b><br><small>'+esc(w[1])+'</small></div><div><button type="button" class="spk" data-say="'+esc(w[0])+'" title="听法语发音">🔊</button></div></div>').join("")+'</div>';
+  h+='<div class="card" style="margin-top:14px"><b>对话</b>'+s.dialog.map(d=>'<div style="margin:12px 0"><b>'+esc(d[0])+'</b> <button type="button" class="spk" data-say="'+esc(d[1])+'" title="听法语发音">🔊</button><br><b>'+esc(d[1])+'</b><br><small>'+esc(d[2])+'</small></div>').join("")+'</div>';
+  h+='<button class="btn" id="scenQuiz">开始小测验</button> <button class="btn alt" id="scenBack2" style="margin-left:0">返回情景对话</button>';
+  $("home").innerHTML=h;
+  $("scenBack").onclick=()=>scenMenu();
+  $("scenBack2").onclick=()=>scenMenu();
+  $("scenQuiz").onclick=()=>scenQuiz(i);
+  document.querySelectorAll("#home [data-say]").forEach(b=>{b.onclick=()=>{try{say(b.dataset.say)}catch(e){}}});
+}
+let SQ=null;
+function scenQuiz(i){
+  const s=SCEN[i]; if(!s) return scenMenu();
+  SQ={i:i,qi:0,score:0};
+  show_("home");
+  scenQuizRender();
+}
+function scenQuizRender(){
+  const s=SCEN[SQ.i],q=s.quiz[SQ.qi];
+  if(!q){
+    const done=scenDone(); done[s.id]=true; try{sv("frs_scen",done)}catch(e){}
+    $("home").innerHTML='<div class="card"><h3 style="margin:0 0 8px">🎉 本场景完成！</h3><p>答对 '+SQ.score+' / '+s.quiz.length+' 题</p><p class="sub">'+(SQ.score===s.quiz.length?"全对，太棒了！":SQ.score>=Math.ceil(s.quiz.length/2)?"不错，继续加油！":"没关系，再读一遍对话，回来再试一次。")+'</p><button class="btn" id="sqBack">返回情景对话</button> <button class="btn alt" id="sqHome" style="margin-left:0">回首页</button></div>';
+    $("sqBack").onclick=()=>scenMenu();
+    $("sqHome").onclick=()=>home();
+    return;
+  }
+  let h='<div class="card"><p class="sub">第 '+(SQ.qi+1)+' / '+s.quiz.length+' 题 · '+esc(s.fr)+'</p><h3 style="margin:0 0 12px">'+esc(q.q)+'</h3>';
+  h+=q.opts.map((o,idx)=>'<div class="opt-row"><button class="opt" data-o="'+idx+'">'+esc(o)+'</button></div>').join("");
+  h+='<div id="sqWhy" style="margin-top:12px"></div><button class="btn alt" id="sqNext" style="display:none;margin-top:10px">下一题 ▶</button></div>';
+  h+='<button class="btn alt" id="sqExit" style="margin-top:14px">退出测验</button>';
+  $("home").innerHTML=h;
+  $("sqExit").onclick=()=>scenView(SQ.i);
+  const opts=document.querySelectorAll("#home [data-o]");
+  opts.forEach(b=>{b.onclick=()=>{
+    if(b.disabled) return;
+    opts.forEach(x=>{x.disabled=true});
+    const pick=+b.dataset.o,ok=pick===q.a;
+    if(ok){b.style.background="#d9f2dd";try{if(typeof gain==="function")gain(10)}catch(e){}SQ.score++;}
+    else{b.style.background="#fbd9d9";const right=opts[q.a];if(right)right.style.background="#d9f2dd";}
+    $("sqWhy").innerHTML='<p style="margin:0"><b>'+(ok?"答对了！+10 XP":"答错了")+'</b><br>'+esc(q.why)+'</p>';
+    const nx=$("sqNext");nx.style.display="";nx.onclick=()=>{SQ.qi++;scenQuizRender();};
+  }});
+}
+(function(){
+  const _homeScen=home;
+  home=function(){
+    _homeScen();
+    try{
+      const t=(typeof getTrack==="function"?getTrack():null);
+      if(!t||t==="spiritual") return;
+      const el=$("home"); if(!el||el.querySelector("[data-scen-home]")) return;
+      const b=document.createElement("button");
+      b.className="lv"; b.setAttribute("data-scen-home","1");
+      b.innerHTML='<div><b>🎭</b>情景对话</div><span>超市 · CAF · 福利 · 银行 · 手机店</span>';
+      b.onclick=()=>scenMenu();
+      el.appendChild(b);
+    }catch(e){}
+  };
+  const _vocabMenuScen=vocabMenu;
+  vocabMenu=function(){
+    _vocabMenuScen();
+    try{
+      const t=(typeof getTrack==="function"?getTrack():null);
+      if(!t||t==="spiritual") return;
+      const el=$("home"); if(!el||el.querySelector("[data-scen-vocab]")) return;
+      const b=document.createElement("button");
+      b.className="lv"; b.setAttribute("data-scen-vocab","1");
+      b.innerHTML='<div><b>🎭</b>情景对话</div><span>超市 · CAF · 福利 · 银行 · 手机店</span>';
+      b.onclick=()=>scenMenu();
+      el.appendChild(b);
+    }catch(e){}
+  };
+})();
+
+</script>
 </body>
 </html>
