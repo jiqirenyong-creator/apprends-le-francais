@@ -534,20 +534,20 @@ const RAW=`神|Dieu|n
 家|la maison|n|A1
 学校|une école|n|A1
 书|un livre|n|A1
-水|de l’eau|n|A1
-面包|le pain|n|A1
-牛奶|le lait|n|A1
-咖啡|le café|n|A1
-茶|le thé|n|A1
-苹果|une pomme|n|A1
+水|de l’eau|n|A1|market2
+面包|le pain|n|A1|market2
+牛奶|le lait|n|A1|market2
+咖啡|le café|n|A1|market2
+茶|le thé|n|A1|market2
+苹果|une pomme|n|A1|market2
 太阳|le soleil|n|A1
 月亮|la lune|n|A1
 白天|le jour|n|A1
 夜晚|la nuit|n|A1
 时间|le temps|n|A1
-手|la main|n|A1
-头|la tête|n|A1
-心|le cœur|n|A1
+手|la main|n|A1|hosp2
+头|la tête|n|A1|hosp2
+心|le cœur|n|A1|hosp2
 爱|un amour|n|A1
 和平|la paix|n|A1
 喜乐|la joie|n|A1
@@ -643,6 +643,357 @@ const RAW=`神|Dieu|n
 恭喜|félicitations|i|A1|greet3
 谢谢你的帮助|merci de votre aide|w|A1|greet3
 想你|tu me manques|w|A1|greet3
+银行|banque|n|A1|bank1
+账户|compte|n|A1|bank1
+活期账户|compte courant|n|A1|bank1
+银行卡|carte bancaire|n|A1|bank1
+信用卡|carte de crédit|n|A1|bank1
+开户|ouvrir un compte|w|A1|bank1
+身份证|carte d’identité|n|A1|bank1
+护照|passeport|n|A1|bank1
+居留证|titre de séjour|n|A1|bank1
+住址证明|justificatif de domicile|n|A1|bank1
+工资单|bulletin de salaire|n|A1|bank1
+表格|formulaire|n|A1|bank1
+填写|remplir|v|A1|bank1
+签字|signer|v|A1|bank1
+签名|signature|n|A1|bank1
+地址|adresse|n|A1|bank1
+邮编|code postal|n|A1|bank1
+出生日期|date de naissance|n|A1|bank1
+密码|mot de passe|n|A1|bank1
+账号|numéro de compte|n|A1|bank1
+钱|argent|n|A1|bank2
+现金|espèces|n|A1|bank2
+纸币|billet de banque|n|A1|bank2
+硬币|pièce de monnaie|n|A1|bank2
+取钱|retirer de l’argent|w|A1|bank2
+存钱|déposer de l’argent|w|A1|bank2
+取款|retrait|n|A1|bank2
+存款|dépôt|n|A1|bank2
+自动取款机|distributeur automatique|n|A1|bank2
+柜台|guichet|n|A1|bank2
+转账|virement|n|A1|bank2
+汇款|faire un virement|w|A1|bank2
+收款|recevoir de l’argent|w|A1|bank2
+余额|solde|n|A1|bank2
+账单|relevé de compte|n|A1|bank2
+收据|reçu|n|A1|bank2
+银行识别码|RIB|n|A1|bank2
+国际账号|IBAN|n|A1|bank2
+收款人|bénéficiaire|n|A1|bank2
+金额|montant|n|A1|bank2
+支付|payer|v|A1|bank3
+付款|paiement|n|A1|bank3
+刷卡|payer par carte|w|A1|bank3
+非接触支付|paiement sans contact|n|A1|bank3
+银行卡密码|code confidentiel|n|A1|bank3
+自动扣款|prélèvement automatique|n|A1|bank3
+手续费|frais bancaires|n|A1|bank3
+利率|taux d’intérêt|n|A1|bank3
+透支|découvert|n|A1|bank3
+限额|plafond|n|A1|bank3
+分行|agence|n|A1|bank3
+银行顾问|conseiller|n|A1|bank3
+预约|rendez-vous|n|A1|bank3
+贷款|prêt|n|A1|bank3
+借钱|emprunter|v|A1|bank3
+还款|rembourser|v|A1|bank3
+月供|mensualité|n|A1|bank3
+挂失|faire opposition|w|A1|bank3
+网上银行|banque en ligne|n|A1|bank3
+手机银行|application bancaire|n|A1|bank3
+医院|l’hôpital|n|A1|hosp1
+医生|le médecin|n|A1|hosp1
+护士|l’infirmière|n|A1|hosp1
+诊所|un cabinet médical|n|A1|hosp1
+病人|un patient|n|A1|hosp1
+预约挂号|prendre rendez-vous|w|A1|hosp1
+预约时间|le rendez-vous|n|A1|hosp1
+接待处|l’accueil|n|A1|hosp1
+候诊室|la salle d’attente|n|A1|hosp1
+问诊|la consultation|n|A1|hosp1
+急诊|les urgences|n|A1|hosp1
+救护车|une ambulance|n|A1|hosp1
+医保卡|la carte Vitale|n|A1|hosp1
+补充医保|la mutuelle|n|A1|hosp1
+处方|une ordonnance|n|A1|hosp1
+看病|voir un médecin|w|A1|hosp1
+检查（动词）|examiner|v|A1|hosp1
+诊断|le diagnostic|n|A1|hosp1
+全科医生|un médecin généraliste|n|A1|hosp1
+专科医生|un spécialiste|n|A1|hosp1
+喉咙|la gorge|n|A1|hosp2
+肚子|le ventre|n|A1|hosp2
+背|le dos|n|A1|hosp2
+胸|la poitrine|n|A1|hosp2
+腿|la jambe|n|A1|hosp2
+脚|le pied|n|A1|hosp2
+眼睛|un œil|n|A1|hosp2
+耳朵|une oreille|n|A1|hosp2
+疼痛|la douleur|n|A1|hosp2
+发烧|la fièvre|n|A1|hosp2
+咳嗽|la toux|n|A1|hosp2
+感冒|un rhume|n|A1|hosp2
+头痛|un mal de tête|n|A1|hosp2
+肚子痛|un mal au ventre|n|A1|hosp2
+喉咙痛|un mal de gorge|n|A1|hosp2
+恶心|avoir mal au cœur|w|A1|hosp2
+头晕|avoir le vertige|w|A1|hosp2
+药房|une pharmacie|n|A1|hosp3
+药|un médicament|n|A1|hosp3
+药片|un comprimé|n|A1|hosp3
+胶囊|une gélule|n|A1|hosp3
+副作用|un effet secondaire|n|A1|hosp3
+每天一次|une fois par jour|w|A1|hosp3
+每天两次|deux fois par jour|w|A1|hosp3
+饭前|avant le repas|w|A1|hosp3
+饭后|après le repas|w|A1|hosp3
+空腹|à jeun|w|A1|hosp3
+血液检查|une prise de sang|n|A1|hosp3
+尿检|une analyse d’urine|n|A1|hosp3
+X光|une radiographie|n|A1|hosp3
+体温|la température|n|A1|hosp3
+血压|la tension|n|A1|hosp3
+打针|une piqûre|n|A1|hosp3
+疫苗|un vaccin|n|A1|hosp3
+过敏|une allergie|n|A1|hosp3
+复诊|une visite de contrôle|n|A1|hosp3
+康复|guérir|v|A1|hosp3
+住房补贴|l’allocation logement|p|A1|caf1
+APL|l’APL|n|A1|caf1
+住房|le logement|n|A1|caf1
+房租|le loyer|n|A1|caf1
+租房|louer|v|A1|caf1
+房东|le propriétaire|n|A1|caf1
+租户|le locataire|n|A1|caf1
+公寓|un appartement|n|A1|caf1
+租赁合同|le bail|n|A1|caf1
+房租收据|la quittance de loyer|p|A1|caf1
+申请|demander|v|A1|caf1
+申请表|le formulaire|n|A1|caf1
+资格|l’éligibilité|n|A1|caf1
+条件|les conditions|n|A1|caf1
+收入|les revenus|n|A1|caf1
+家庭|la famille|n|A1|caf1
+子女|les enfants|n|A1|caf1
+单身|célibataire|a|A1|caf1
+已婚|marié|a|A1|caf1
+主要住房|la résidence principale|p|A1|caf1
+材料|les pièces justificatives|p|A1|caf2
+身份证|la carte d’identité|p|A1|caf2
+护照|le passeport|n|A1|caf2
+居留证|le titre de séjour|p|A1|caf2
+收入证明|un justificatif de revenus|p|A1|caf2
+税单|l’avis d’imposition|p|A1|caf2
+银行账户证明|le relevé d’identité bancaire|p|A1|caf2
+RIB|le RIB|n|A1|caf2
+地址证明|un justificatif de domicile|p|A1|caf2
+居住证明|un justificatif de domicile|n|A1|caf2
+声明|la déclaration|n|A1|caf2
+申报|déclarer|v|A1|caf2
+盖章|tamponner|v|A1|caf2
+签名|la signature|n|A1|caf2
+复印件|une photocopie|n|A1|caf2
+原件|l’original|n|A1|caf2
+扫描|scanner|v|A1|caf2
+上传|envoyer|v|A1|caf2
+在线|en ligne|w|A1|caf2
+网站|le site internet|p|A1|caf2
+档案|le dossier|n|A1|caf3
+跟进|le suivi|n|A1|caf3
+查询|consulter|v|A1|caf3
+状态|le statut|n|A1|caf3
+处理中|en cours de traitement|w|A1|caf3
+拒绝|refuser|v|A1|caf3
+付款|le versement|n|A1|caf3
+银行转账|le virement|n|A1|caf3
+金额|le montant|n|A1|caf3
+延迟|le retard|n|A1|caf3
+情况变化|le changement de situation|p|A1|caf3
+搬家|déménager|v|A1|caf3
+结婚|se marier|v|A1|caf3
+出生|la naissance|n|A1|caf3
+停发|la suspension|n|A1|caf3
+申诉|le recours|n|A1|caf3
+上诉|faire appel|w|A1|caf3
+联系|contacter|v|A1|caf3
+预约|le rendez-vous|n|A1|caf3
+电话|le téléphone|n|A1|caf3
+社会福利|les aides sociales|w|A1|welf1
+市政府|la mairie|n|A1|welf1
+社会工作者|un assistant social|n|A1|welf1
+低收入补助金|le RSA|n|A1|welf1
+补助金|une allocation|n|A1|welf1
+权利|un droit|n|A1|welf1
+帮助|l’aide|n|A1|welf1
+困难|une difficulté|n|A1|welf1
+失业|le chômage|n|A1|welf1
+残疾|un handicap|n|A1|welf1
+退休|la retraite|n|A1|welf1
+家庭|une famille|n|A1|welf1
+单亲妈妈|une mère célibataire|w|A1|welf1
+老年人|une personne âgée|w|A1|welf1
+医疗保险|l’assurance maladie|w|A1|welf1
+住房|un logement|n|A1|welf1
+食物银行|une banque alimentaire|w|A1|welf1
+慈善机构|une association caritative|w|A1|welf1
+减免|une exonération|n|A1|welf1
+社会服务|les services sociaux|w|A1|welf1
+预约|un rendez-vous|n|A1|welf2
+申请|une demande|n|A1|welf2
+申请表|un formulaire|n|A1|welf2
+申请材料|un dossier|n|A1|welf2
+证明文件|un justificatif|n|A1|welf2
+身份证|une carte d’identité|w|A1|welf2
+打印|imprimer|v|A1|welf2
+翻译件|une traduction|n|A1|welf2
+签名|une signature|n|A1|welf2
+递交|remettre|v|A1|welf2
+提交|déposer|v|A1|welf2
+等待|attendre|v|A1|welf2
+接待员|un agent d’accueil|n|A1|welf2
+窗口|un guichet|n|A1|welf2
+取号|prendre un ticket|w|A1|welf2
+通知信|un courrier|n|A1|welf2
+决定|une décision|n|A1|welf2
+拒绝|un refus|n|A1|welf2
+申诉|un recours|n|A1|welf2
+咨询|un renseignement|n|A1|welf2
+食品援助|l’aide alimentaire|w|A1|welf3
+住房援助|l’aide au logement|w|A1|welf3
+优惠票价|un tarif réduit|w|A1|welf3
+能源补助|le chèque énergie|w|A1|welf3
+医疗补助|l’aide médicale|w|A1|welf3
+社会融入|l’insertion sociale|w|A1|welf3
+一次性补助|une aide exceptionnelle|w|A1|welf3
+助学金|une bourse|n|A1|welf3
+免费用餐|un repas gratuit|w|A1|welf3
+免费乘车|la gratuité des transports|w|A1|welf3
+费用减免|une réduction|n|A1|welf3
+续期|un renouvellement|n|A1|welf3
+更新资料|mettre à jour|w|A1|welf3
+领取补助金|toucher|v|A1|welf3
+发放补助|verser|v|A1|welf3
+金额|un montant|n|A1|welf3
+每月|par mois|w|A1|welf3
+银行账户|un compte bancaire|w|A1|welf3
+食堂|une cantine|n|A1|welf3
+托儿所|une crèche|n|A1|welf3
+手机|un portable|n|A1|phone1
+电话|un téléphone|n|A1|phone1
+屏幕|un écran|n|A1|phone1
+电池|une batterie|n|A1|phone1
+相机|un appareil photo|n|A1|phone1
+内存|la mémoire|n|A1|phone1
+存储空间|le stockage|n|A1|phone1
+价格|un prix|n|A1|phone1
+品牌|une marque|n|A1|phone1
+型号|un modèle|n|A1|phone1
+新的|neuf|a|A1|phone1
+二手的|d’occasion|a|A1|phone1
+挑选|choisir|v|A1|phone1
+卖|vendre|v|A1|phone1
+试用|essayer|v|A1|phone1
+选择|choisir|v|A1|phone1
+比较|comparer|v|A1|phone1
+充电器|un chargeur|n|A1|phone1
+手机壳|une coque|n|A1|phone1
+耳机|un écouteur|n|A1|phone1
+套餐|un forfait|n|A1|phone2
+订阅|un abonnement|n|A1|phone2
+流量|les données mobiles|n|A1|phone2
+通话|un appel|n|A1|phone2
+短信|un SMS|n|A1|phone2
+电话卡|une carte SIM|n|A1|phone2
+合同|un contrat|n|A1|phone2
+月费|une mensualité|n|A1|phone2
+账单|une facture|n|A1|phone2
+运营商|un opérateur|n|A1|phone2
+网络|un réseau|n|A1|phone2
+信号|le signal|n|A1|phone2
+无限流量|les données illimitées|p|A1|phone2
+无限|illimité|a|A1|phone2
+优惠|une promotion|n|A1|phone2
+付款|payer|v|A1|phone2
+开通|activer|v|A1|phone2
+取消|annuler|v|A1|phone2
+国际通话|les appels internationaux|p|A1|phone2
+套餐外费用|le hors-forfait|n|A1|phone2
+修理|réparer|v|A1|phone3
+保修|la garantie|n|A1|phone3
+保修期|la durée de garantie|p|A1|phone3
+屏幕碎了|un écran cassé|p|A1|phone3
+坏了|en panne|p|A1|phone3
+解锁|débloquer|v|A1|phone3
+锁定|verrouiller|v|A1|phone3
+密码|un mot de passe|n|A1|phone3
+客服|le service client|n|A1|phone3
+预约|prendre rendez-vous|v|A1|phone3
+换货|échanger|v|A1|phone3
+退货|retourner|v|A1|phone3
+退款|rembourser|v|A1|phone3
+收据|un reçu|n|A1|phone3
+售后服务|le service après-vente|n|A1|phone3
+更新|mettre à jour|v|A1|phone3
+重启|redémarrer|v|A1|phone3
+备份|sauvegarder|v|A1|phone3
+恢复出厂设置|réinitialiser|v|A1|phone3
+帮助|aider|v|A1|phone3
+超市|le supermarché|n|A1|market1
+商店|le magasin|n|A1|market1
+购物|faire les courses|w|A1|market1
+购物清单|la liste de courses|n|A1|market1
+购物车|le chariot|n|A1|market1
+购物篮|le panier|n|A1|market1
+货架|le rayon|n|A1|market1
+过道|l’allée|n|A1|market1
+入口|l’entrée|n|A1|market1
+价格|le prix|n|A1|market1
+总价|le total|n|A1|market1
+打折|en solde|w|A1|market1
+促销|la promotion|n|A1|market1
+便宜|pas cher|w|A1|market1
+贵|cher|a|A1|market1
+买|acheter|v|A1|market1
+选|choisir|v|A1|market1
+拿|prendre|v|A1|market1
+找|chercher|v|A1|market1
+免费|gratuit|a|A1|market1
+水果|le fruit|n|A1|market2
+蔬菜|le légume|n|A1|market2
+肉|la viande|n|A1|market2
+鱼|le poisson|n|A1|market2
+鸡肉|le poulet|n|A1|market2
+鸡蛋|un œuf|n|A1|market2
+奶酪|le fromage|n|A1|market2
+黄油|le beurre|n|A1|market2
+酸奶|le yaourt|n|A1|market2
+米|le riz|n|A1|market2
+糖|le sucre|n|A1|market2
+盐|le sel|n|A1|market2
+果汁|le jus de fruits|n|A1|market2
+巧克力|le chocolat|n|A1|market2
+结账|passer en caisse|w|A1|market3
+收银台|la caisse|n|A1|market3
+收银员|le caissier|n|A1|market3
+收据|le ticket de caisse|n|A1|market3
+付钱|payer|v|A1|market3
+现金支付|payer en espèces|w|A1|market3
+信用卡|la carte bancaire|n|A1|market3
+现金|les espèces|n|A1|market3
+找零|la monnaie|n|A1|market3
+袋子|le sac|n|A1|market3
+塑料袋|le sac en plastique|n|A1|market3
+排队|faire la queue|w|A1|market3
+会员卡|la carte de fidélité|n|A1|market3
+折扣|la réduction|n|A1|market3
+称重|peser|v|A1|market3
+自助结账|la caisse automatique|n|A1|market3
+条形码|le code-barres|n|A1|market3
+保质期|la date limite de consommation|n|A1|market3
+出口|la sortie|n|A1|market3
+优惠券|le bon de réduction|n|A1|market3
 §MORE`;
 const POS={v:"动词",n:"名词",a:"形容词",p:"名词短语",w:"动词短语",i:"问候语",num:"数字"};
 const pf=w=>w.f.split(" / ")[0];
@@ -2239,6 +2590,12 @@ function gramTopicFinish(id,ok,total){
 const CATS=[
  {id:"greet",icon:"👋",name:"问候",sub:"打招呼 · 自我介绍 · 礼貌用语",
   lessons:[{n:1,name:"第 1 课",sub:"打招呼"},{n:2,name:"第 2 课",sub:"礼貌用语"},{n:3,name:"第 3 课",sub:"告别与祝福"}]},
+ {id:"bank",icon:"🏦",name:"银行",sub:"开户 · 存取 · 支付",lessons:[{n:1,name:"第 1 课",sub:"开户办卡"},{n:2,name:"第 2 课",sub:"存取与转账"},{n:3,name:"第 3 课",sub:"支付与服务"}]},
+ {id:"hosp",icon:"🏥",name:"医院",sub:"挂号 · 症状 · 取药",lessons:[{n:1,name:"第 1 课",sub:"挂号问诊"},{n:2,name:"第 2 课",sub:"症状与身体"},{n:3,name:"第 3 课",sub:"检查取药"}]},
+ {id:"caf",icon:"🏠",name:"CAF",sub:"住房补贴 · 材料 · 跟进",lessons:[{n:1,name:"第 1 课",sub:"申请住房补贴"},{n:2,name:"第 2 课",sub:"材料与表格"},{n:3,name:"第 3 课",sub:"跟进与变更"}]},
+ {id:"welf",icon:"🤝",name:"福利",sub:"社会救助 · 手续 · 补助",lessons:[{n:1,name:"第 1 课",sub:"社会福利"},{n:2,name:"第 2 课",sub:"办理手续"},{n:3,name:"第 3 课",sub:"补助与津贴"}]},
+ {id:"phone",icon:"📱",name:"手机店",sub:"选手机 · 套餐 · 售后",lessons:[{n:1,name:"第 1 课",sub:"选手机"},{n:2,name:"第 2 课",sub:"办套餐"},{n:3,name:"第 3 课",sub:"维修与售后"}]},
+ {id:"market",icon:"🛒",name:"超市",sub:"购物 · 食品 · 结账",lessons:[{n:1,name:"第 1 课",sub:"购物"},{n:2,name:"第 2 课",sub:"食品"},{n:3,name:"第 3 课",sub:"结账与支付"}]}
 ];
 function catDef(id){return CATS.find(c=>c.id===id);}
 function catLessonWords(catId,li){return TW().filter(w=>w.cat===catId+li);}
