@@ -2447,12 +2447,12 @@ function applyTitle(){
 // ---- 1. 多邻国式弯曲闯关路 ----
 stageMap=function(k){
   const sg=ld("frs_st",{});
-  const ws=TW().filter(w=>w.lv===k),n=Math.ceil(ws.length/5);
+  const ws=TW().filter(w=>w.lv===k),n=Math.ceil(ws.length/10);
   let done=0;for(let j=1;j<=n;j++)if(sg[k+"-"+j]&&sg[k+"-"+j].p)done++;
   const hearts=duoHeartsCount();
   let h='<button class="btn alt" id="bk" style="margin:0 0 10px">← 返回词汇菜单</button>';
   h+='<h3 style="margin:0 0 6px">'+k+' 闯关地图</h3>';
-  h+='<p class="sub">每关 5 个词，每个词练三遍：先选词认识，再选字母拼写和句子填空穿插练，答对 70% 以上通关并解锁下一关。'+("❤️".repeat(hearts)+"🤍".repeat(DUO.maxHearts-hearts))+' · 通关 '+done+'/'+n+'</p>';
+  h+='<p class="sub">每关 10 个词，每词练两遍：先选词认识，再拼写和句子填空穿插练，答对 70% 以上通关并解锁下一关。'+("❤️".repeat(hearts)+"🤍".repeat(DUO.maxHearts-hearts))+' · 通关 '+done+'/'+n+'</p>';
   h+='<div class="goal-bar" style="margin:0 0 18px"><i style="width:'+(n?done/n*100:0)+'%;background:linear-gradient(90deg,#58cc02,#46a302)"></i></div>';
   h+='<div class="path-wrap"><div class="path-line"></div>';
   for(let i=1;i<=n;i++){
@@ -2465,7 +2465,7 @@ stageMap=function(k){
       +(current?'<img class="path-yuki" src="'+(YUKI_STICKERS.allez||YUKI_STICKERS.bravo)+'" alt="Yuki">':'')
       +'<button class="path-btn '+cls+'" data-n="'+i+'" '+(op?"":"disabled")+'>'+label+'</button>'
       +'<div class="path-stars">'+(r?"★".repeat(r.s)+"☆".repeat(3-r.s):"☆☆☆")+'</div>'
-      +'<div class="path-name">第 '+i+' 关 · 5 词</div></div>';
+      +'<div class="path-name">第 '+i+' 关 · 10 词</div></div>';
   }
   h+='</div>';
   show_("home");$("home").innerHTML=h;
