@@ -68,7 +68,7 @@ h1{letter-spacing:.02em;color:#26334a}h1:before{content:"🐾";display:inline-gr
 <h1>✝️ 法语宗教词汇学习站</h1>
 <p class="sub">中文 ⇄ 法语 · 选择题 + 拼写 · A1–C2 分级 · 标注阴阳性与单复数</p>
 <div id="home"></div><div id="play" class="hidden"></div><div id="end" class="hidden"></div><div id="list" class="hidden"></div>
-<p class="foot">把本页链接发给朋友即可一起学习；每个人的进度保存在各自的浏览器里。<br>带 * 的阴阳性由词形与冠词推断，请自行核对。级别由词长与结构自动估计，仅供参考。</p>
+<p class="foot">把本页链接发给朋友即可一起学习；每个人的进度保存在各自的浏览器里。<br>带 * 的阴阳性由词形与冠词推断，请自行核对。级别多由词长与结构自动估计，仅供参考；平行词组已人工对齐，全部词条尚未逐条人工定级。</p>
 </div>
 <script>
 const RAW=`神|Dieu|n
@@ -143,8 +143,8 @@ const RAW=`神|Dieu|n
 不可侵犯|inviolabilité|n
 触犯（诫命、条例）|violation|n
 触犯（诫命、条例）|violer|v
-触犯神|commettre une offense contre Dieu|w
-得罪神|offenser Dieu|w
+触犯神|commettre une offense contre Dieu|w|B2
+得罪神|offenser Dieu|w|B2
 （性情）不可触犯|ne doit pas être offensé|w
 过犯|transgression|n
 过犯|transgresser|v
@@ -249,8 +249,8 @@ const RAW=`神|Dieu|n
 理性|rationalité|n
 正常人性|humanité normale|p
 正常理智|raison normale|p
-与神相合|être compatible avec Dieu|w
-与神不相合|être incompatible avec Dieu|w
+与神相合|être compatible avec Dieu|w|C1
+与神不相合|être incompatible avec Dieu|w|C1
 为神花费|se dépenser pour Dieu|w
 神的托付|mandat de Dieu / commission de Dieu|p
 人的样式|ressemblance humaine|p
@@ -1632,14 +1632,16 @@ const EASY=new Set(["dieu","jésus","satan","péché","nature","raison","loi","v
 const STOP=/^(le|la|les|l|de|du|des|d|à|en|un|une|mon|ma|se|s|qqn|qch|et)$/i;
 const words=f=>f.replace(/\([^)]*\)/g," ").replace(/[’']/g," ").split(/[\s,-]+/).filter(x=>x&&!STOP.test(x));
 function lvl(w){const ws=words(pf(w));if(ws.length===1&&EASY.has(ws[0].toLowerCase()))return"A1";const sc=Math.max(...ws.map(x=>x.length),0)+1.5*(ws.length-1);return sc<=4?"A1":sc<=7?"A2":sc<=10?"B1":sc<=13?"B2":sc<=16?"C1":"C2"}
-const MM=new Set("péché salut don enfer tempérament examen spécimen courroux fardeau calibre archange ancien pasteur sacrificateur courant antéchrist exemple modèle règlement peuple groupe règne principe ministère monde domaine sacrifice diacre étang puits plan devoir objet fils père seigneur créateur dieu satan jésus esprit saint-esprit tout-puissant éternel jugement châtiment échange éclairage commandement témoignage christianisme dragon ciel nom".split(" "));
+const MM=new Set("péché salut don enfer tempérament examen spécimen courroux fardeau calibre archange ancien pasteur sacrificateur courant antéchrist exemple modèle règlement peuple groupe règne principe ministère monde domaine sacrifice diacre étang puits plan devoir objet fils père seigneur créateur dieu satan jésus esprit saint-esprit tout-puissant éternel jugement châtiment échange éclairage commandement témoignage christianisme dragon ciel nom être ascenseur horaire service".split(" "));
+const GENDER_FIX={"les derniers jours":{g:"m",pl:true},"les possessions de dieu":{g:"f",pl:true},"les principes des paroles de dieu":{g:"m",pl:true},"l'être de dieu":{g:"m",pl:false},"le peuple élu de dieu":{g:"m",pl:null}};
 function gender(w){
  if(!/^[np]$/.test(w.p))return null;
  let t=pf(w).replace(/^\((le|la|les|l’|mon|ma)\)\s*/i,"$1 ").replace(/\([^)]*\)/g," ").trim().toLowerCase().replace(/’/g,"'");
+  const _fix=GENDER_FIX[t];if(_fix)return{g:_fix.g,pl:_fix.pl,inf:false};
  let g=null,pl=false,known=false;
- let m=t.match(/^(le|un|mon|la|une|ma|les|l')\s*(.*)$/);
+ let m=t.match(/^(les|le|la|un|une|mon|ma|l')\s*(.*)$/);
  if(m){const a=m[1];t=m[2];known=true;if(a==="les")pl=true;else if(/^(le|un|mon)$/.test(a))g="m";else if(/^(la|une|ma)$/.test(a))g="f"}
- const h=(t.split(/[\s-]+/)[0]||"");
+ const h0=(t.split(/[\s-]+/)[0]||"");const h=(pl&&h0.endsWith("s"))?h0.slice(0,-1):h0;
  if(!g){known=false;g=MM.has(h)?"m":/teur$/.test(h)||/(ment|isme|age|eau|oir|ier)$/.test(h)?"m":/(tion|sion|xion|té|ité|ence|ance|ure|ie|ée|ude|esse|ine|ette|eur|ère|ison)$/.test(h)?"f":/e$/.test(h)?"f":"m"}
  if(/\(s\)/.test(w.f))pl=null;
  return{g,pl,inf:!known};
@@ -1733,7 +1735,7 @@ function next(){
  const optRow=text=>{const row=document.createElement("div"),answer=document.createElement("button");row.className="opt-row";answer.className="opt";answer.dataset.v=text;answer.textContent=text;row.appendChild(answer);if(/[a-zà-ÿœ]/i.test(text)){const speaker=document.createElement("button");speaker.type="button";speaker.className="spk";speaker.dataset.say=text;speaker.title="听法语发音";speaker.textContent="🔊";row.appendChild(speaker)}return row.outerHTML};
  if(x.t==="m"){
   const key=x.dir==="z2f"?"f":"z",val=o=>key==="f"?pf(o):o.z;
-  const ds=sh(TW().filter(o=>o.id!==w.id&&val(o)!==val(w)&&(o.p===w.p||Math.random()<.2))).filter((o,i,a)=>a.findIndex(p=>val(p)===val(o))===i).slice(0,3);
+  const __uniqPOS=a=>a.filter((o,i,arr)=>arr.findIndex(p=>val(p)===val(o))===i);let ds=__uniqPOS(sh(TW().filter(o=>o.id!==w.id&&val(o)!==val(w)&&o.p===w.p))).slice(0,3);if(ds.length<3)ds=ds.concat(__uniqPOS(sh(TW().filter(o=>o.id!==w.id&&val(o)!==val(w)&&o.p!==w.p&&!ds.includes(o)))).slice(0,3-ds.length));
   x.ans=val(w);body=sh([w,...ds]).map(o=>optRow(val(o))).join("");
  }else if(x.t==="s"){
   // 第三遍：句子填空 —— 句子里缺的词，从同词性干扰项里选；中文意思作提示。
@@ -1795,7 +1797,7 @@ function next(){
   $("chk").onclick=go;inp.onkeydown=e=>{if(e.key==="Enter")go()};
  }
 }
-function judge(ok,btn,note=""){const x=S.qs[S.i],w=x.w;const isChoice=(x.t==="m"||x.t==="s");const chosen=isChoice?(btn?.dataset.v||btn?.textContent||""):($("ans")?.value||"");S.review=S.review||[];S.review.push({question:x.sen?x.sen.f:(x.dir==="z2f"?w.z:w.f),selected:chosen,answer:x.sen?x.ans:(x.t==="m"?x.ans:w.f),french:x.sen?(x._full||x.sen.f.replace("___",x.ans)):w.f,chinese:x.sen?x.sen.z:w.z,ok:!!ok,wordId:w.id,explanation:note||""});if(isChoice)document.querySelectorAll(".opt").forEach(b=>{b.disabled=true;if(b.dataset.v===x.ans)b.classList.add("ok");else if(b===btn)b.classList.add("bad")});else{$("ans").disabled=true;$("chk").classList.add("hidden")}const m=ld("frs_m",{}),wr=ld("frs_w",[]);let answerPraise=null;if(ok){S.ok++;try{answerPraise=gain(10)}catch(e){console.error("经验动画失败",e)};m[w.id]=(m[w.id]||0)+((x.t==="f"||x.t==="l"||x.t==="s")?1:0);if(m[w.id]>=2)sv("frs_w",wr.filter(i=>i!==w.id))}else{const lostStreak=RIGHT_STREAK;resetRightStreak();if(!S.wrong.includes(w))S.wrong.push(w);m[w.id]=0;if(!wr.includes(w.id))sv("frs_w",[...wr,w.id]);if(S.stage&&x.pass!==2&&x.pass!==3){try{if(typeof duoSetHearts==="function"&&typeof duoHeartsCount==="function"){duoSetHearts(duoHeartsCount()-1);if(duoHeartsCount()===0)toast("❤️ 爱心用完了！去错词本复习一轮，补一颗爱心吧")}}catch(e){}}try{playFeedbackSound(false);if(lostStreak>=3)yukiMoment("别气馁，继续加油！",[YUKI_STICKERS.tupeux,YUKI_STICKERS.start,YUKI_STICKERS.learn][Math.floor(Math.random()*3)])}catch(e){}}try{const b=document.querySelector("#play .bar span:nth-child(2)");if(b)b.textContent="答对 "+S.ok;const hp=document.querySelector("#playHearts");if(hp&&typeof duoHeartsCount==="function")hp.textContent="❤️".repeat(duoHeartsCount())+"🤍".repeat(5-duoHeartsCount())}catch(e){}sv("frs_m",m);saveVocabSession(S.i+1);const last=S.i>=S.qs.length-1;$("fb").innerHTML=`<div class="fb">${ok?"✅ 正确！":"❌ 再记一下。"}${note}<br><b>${w.z}</b> = <b>${w.f}</b><br>${tags(w)}</div><button class="btn" id="nx">${last?"查看本轮总结":"下一题"}${st().autoNext?"（5秒后自动）":""}</button>`;const button=$("nx");button.classList.add("yuki-next");try{button.scrollIntoView({behavior:"smooth",block:"nearest"})}catch(e){}const timer=st().autoNext?setTimeout(()=>{if(button.isConnected)button.click()},5000):null;button.onclick=()=>{if(timer)clearTimeout(timer);if(last)fin();else{S.i++;next()}}}function fin(){
+function judge(ok,btn,note=""){const x=S.qs[S.i],w=x.w;const isChoice=(x.t==="m"||x.t==="s");const chosen=isChoice?(btn?.dataset.v||btn?.textContent||""):($("ans")?.value||"");S.review=S.review||[];S.review.push({question:x.sen?x.sen.f:(x.dir==="z2f"?w.z:w.f),selected:chosen,answer:x.sen?x.ans:(x.t==="m"?x.ans:w.f),french:x.sen?(x._full||x.sen.f.replace("___",x.ans)):w.f,chinese:x.sen?x.sen.z:w.z,ok:!!ok,wordId:w.id,explanation:note||""});if(isChoice)document.querySelectorAll(".opt").forEach(b=>{b.disabled=true;if(b.dataset.v===x.ans)b.classList.add("ok");else if(b===btn)b.classList.add("bad")});else{$("ans").disabled=true;$("chk").classList.add("hidden")}const m=ld("frs_m",{}),wr=ld("frs_w",[]);let answerPraise=null;if(ok){S.ok++;try{answerPraise=gain(10)}catch(e){console.error("经验动画失败",e)};m[w.id]=(m[w.id]||0)+1;if(m[w.id]>=2)sv("frs_w",wr.filter(i=>i!==w.id))}else{const lostStreak=RIGHT_STREAK;resetRightStreak();if(!S.wrong.includes(w))S.wrong.push(w);m[w.id]=0;if(!wr.includes(w.id))sv("frs_w",[...wr,w.id]);if(S.stage&&x.pass!==2&&x.pass!==3){try{if(typeof duoSetHearts==="function"&&typeof duoHeartsCount==="function"){duoSetHearts(duoHeartsCount()-1);if(duoHeartsCount()===0)toast("❤️ 爱心用完了！去错词本复习一轮，补一颗爱心吧")}}catch(e){}}try{playFeedbackSound(false);if(lostStreak>=3)yukiMoment("别气馁，继续加油！",[YUKI_STICKERS.tupeux,YUKI_STICKERS.start,YUKI_STICKERS.learn][Math.floor(Math.random()*3)])}catch(e){}}try{const b=document.querySelector("#play .bar span:nth-child(2)");if(b)b.textContent="答对 "+S.ok;const hp=document.querySelector("#playHearts");if(hp&&typeof duoHeartsCount==="function")hp.textContent="❤️".repeat(duoHeartsCount())+"🤍".repeat(5-duoHeartsCount())}catch(e){}sv("frs_m",m);saveVocabSession(S.i+1);const last=S.i>=S.qs.length-1;$("fb").innerHTML=`<div class="fb">${ok?"✅ 正确！":"❌ 再记一下。"}${note}<br><b>${w.z}</b> = <b>${w.f}</b><br>${tags(w)}</div><button class="btn" id="nx">${last?"查看本轮总结":"下一题"}${st().autoNext?"（5秒后自动）":""}</button>`;const button=$("nx");button.classList.add("yuki-next");try{button.scrollIntoView({behavior:"smooth",block:"nearest"})}catch(e){}const timer=st().autoNext?setTimeout(()=>{if(button.isConnected)button.click()},5000):null;button.onclick=()=>{if(timer)clearTimeout(timer);if(last)fin();else{S.i++;next()}}}function fin(){
  sv("frs_vsession",null);
  show_("end");
  $("end").innerHTML=`<div class="card"><p class="big">${S.ok} / ${S.qs.length}</p>${S.wrong.length?"<b>需要复习：</b><ul>"+S.wrong.map(w=>`<li>${w.z} → <b>${w.f}</b> ${tags(w)}</li>`).join("")+"</ul>":"<p>🎉 全部答对！</p>"}
@@ -1869,7 +1871,7 @@ const G=[{t:"b",f:"Je m’appelle Marie.",z:"我叫玛丽。（s’appeler：je 
 {t:"c",q:"Je ___ en Dieu. (croire)",a:"crois",o:["croyons","croit","croire"],z:"croire 现在时：je crois, nous croyons, il croit。"},{t:"c",q:"Il faut que tu ___ patient.",a:"sois",o:["es","seras","étais"],z:"il faut que + 虚拟式：être → sois。"},{t:"c",q:"Elle ___ allée à l’église.",a:"est",o:["a","était","sera"],z:"aller 的复合过去时用 être：elle est allée。"},{t:"c",q:"C’est le livre ___ je t’ai parlé.",a:"dont",o:["que","qui","où"],z:"parler de qqch → 关系代词 dont。"},{t:"c",q:"Nous ___ la vérité depuis longtemps. (chercher)",a:"cherchons",o:["cherchez","cherchent","cherche"],z:"nous → -ons：nous cherchons。"},
 {t:"c",q:"“Hier, nous avons prié.” 用的是什么时态？",a:"复合过去时",o:["现在时","简单将来时","未完成过去时"],z:"avoir + 过去分词（prié）= 复合过去时。"},{t:"c",q:"“Si j’avais la foi, je prierais.” 这是哪种结构？",a:"si + 未完成过去时 → 条件式",o:["si + 现在时 → 将来时","虚拟式从句","被动语态"],z:"与现在相反的假设：si + imparfait, conditionnel。"},
 {t:"b",f:"Il suffit de regarder le monde aujourd’hui.",z:"只要看看今天的世界就够了。（il suffit de + 不定式）"},
-{t:"b",f:"Il sera de nouveau rejeté par cette génération.",z:"他将再次被这一代人弃绝。（被动态：sera + 过去分词 + par）"},
+{t:"b",f:"Il sera de nouveau rejeté par cette génération.",z:"他将再次被这一代人弃绝。（被动态：sera + 过去分词 + par）",alt:["Il sera rejeté de nouveau par cette génération."]},
 {t:"b",f:"Le Seigneur Jésus est déjà revenu dans la chair.",z:"主耶稣已经在肉身中回来了。（revenir 的复合过去时用 être）"},
 {t:"b",f:"Il n’y a aucun doute à ce sujet.",z:"对此毫无疑问。（il n’y a aucun + 名词）"},
 {t:"b",f:"Qu’est-ce que le Fils de l’homme ?",z:"什么是人子？（qu’est-ce que 疑问句）"},
@@ -1972,7 +1974,7 @@ const G_SENTENCE_HELP={"Dieu nous aime.":{when:"宾语代词通常放在变位�
 "Qu’est-ce que le Fils de l’homme ?":{when:"qu’est-ce que 是询问事物定义或身份的常见口语疑问结构。",correct:"结构为 Qu’est-ce que + 主语/名词；意思是“什么是人子？”"},
 "Je les connais, et elles me suivent.":{when:"宾语代词通常放在变位动词前；les 可代替复数直接宾语，me 可代替“跟随我”中的宾语。",correct:"connaître qui/quoi? → les；suivre qui? → me。于是说 je les connais、elles me suivent。"}
 };
-function grammarFeedback(it,selected){const d=G_HELP[it.q]||G_SENTENCE_HELP[it.f]||{},box=document.createElement("div");box.className="lesson";const title=document.createElement("h3");title.textContent="📚 语法讲解";box.appendChild(title);const correct=it.a||it.f;const add=(label,text)=>{const p=document.createElement("p"),b=document.createElement("b");b.textContent=label+"：";p.append(b,document.createTextNode(text));box.appendChild(p)};add("正确答案",correct);add("什么时候用",d.when||"请结合句中的时间表达、连词和动词搭配判断；具体规则见下方。 "+(it.z||""));add("为什么正确",d.correct||it.z||"该形式符合句中要求的语法结构。");if(it.o&&it.o.length){const h=document.createElement("p");h.innerHTML="<b>其他选项为什么不合适</b>";box.appendChild(h);const ul=document.createElement("ul");it.o.forEach(o=>{const li=document.createElement("li"),strong=document.createElement("b");strong.textContent=o+"：";li.appendChild(strong);li.appendChild(document.createTextNode(d.wrong?.[o]||("本题的关键规则是："+(it.z||"要符合句中上下文和动词搭配。"))));ul.appendChild(li)});box.appendChild(ul)}if(selected&&selected!==correct&&!(d.wrong&&d.wrong[selected]))add("你的选择",selected+"不符合本题关键条件。对照上面的选项辨析，重点留意句中的时间词、主语和固定搭配。");return box}
+function grammarFeedback(it,selected){const d=G_HELP[it.q]||G_SENTENCE_HELP[it.f]||{},box=document.createElement("div");box.className="lesson";const title=document.createElement("h3");title.textContent="📚 语法讲解";box.appendChild(title);const correct=it.a||it.f;const add=(label,text)=>{const p=document.createElement("p"),b=document.createElement("b");b.textContent=label+"：";p.append(b,document.createTextNode(text));box.appendChild(p)};add("正确答案",correct);add("什么时候用",d.when||"请结合句中的时间表达、连词和动词搭配判断；具体规则见下方。 "+(it.z||""));add("为什么正确",d.correct||it.z||"该形式符合句中要求的语法结构。");if(it.o&&it.o.length){const h=document.createElement("p");h.innerHTML="<b>其他选项为什么不合适</b>";box.appendChild(h);const ul=document.createElement("ul");it.o.forEach(o=>{const li=document.createElement("li"),strong=document.createElement("b");strong.textContent=o+"：";li.appendChild(strong);li.appendChild(document.createTextNode(d.wrong?.[o]||("本题的关键规则是："+(it.z||"要符合句中上下文和动词搭配。"))));ul.appendChild(li)});box.appendChild(ul)}if(selected&&selected!==correct){if(it.t==="b"&&typeof window.__sentEq==="function"&&((it.alt||[]).some(a=>window.__sentEq(selected,a))||window.__sentEq(selected,correct)))add("你的句子",selected+" —— 这种词序也是正确的（副词位置可以移动），已按正确计分。");else if(it.t==="b")add("你的句子","你的句子和标准答案不一致：请逐词对照词块顺序、动词形式和介词（如 par），再对照上面的中文意思重排一次。");else if(!(d.wrong&&d.wrong[selected]))add("你的选择",selected+"不符合本题关键条件。对照上面的选项辨析，重点留意句中的时间词、主语和固定搭配。");}return box}
 function rPron(it,el,done){
  if(it.t==="r"){let f1=false;const fin=(g,spoken=it.f)=>{if(f1)return;f1=true;done(g,spoken)};
   el.innerHTML=`<span class="tag">朗读</span><div class="q">${it.f}</div><small>${it.z}</small><br><small>跟读相似度依据浏览器语音识别结果估算，仅供参考，不等同专业发音评分。</small><br><button class="btn alt" id="l" style="margin-left:0">🔊 听</button><button class="btn" id="m">🎤 跟读</button><div id="r"></div>`;$("l").onclick=()=>say(it.f);if(st().say)say(it.f);
@@ -1991,7 +1993,7 @@ function rGram(it,el,done){
  const draw=()=>{$("sl").innerHTML=pk.map(i=>`<button class="chip" data-p="${i}">${ws[i]}</button>`).join("")||"<small>按顺序点下面的词组成句子</small>";
   $("bk").innerHTML=ord.filter(i=>!pk.includes(i)).map(i=>`<button class="chip" data-b="${i}">${ws[i]}</button>`).join("");
   $("sl").querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{pk=pk.filter(i=>i!=b.dataset.p);draw()});$("bk").querySelectorAll("[data-b]").forEach(b=>b.onclick=()=>{pk.push(+b.dataset.b);draw()})};draw();
- $("ck").onclick=()=>{const g=pk.map(i=>ws[i]).join(" ")===it.f;$("ck").classList.add("hidden");const lesson=grammarFeedback(it,pk.map(i=>ws[i]).join(" "));const listen=document.createElement("button");listen.className="spk";listen.textContent="🔊 听发音";listen.onclick=()=>say(it.f);lesson.appendChild(listen);$("r").replaceChildren(lesson);if(st().say)say(it.f);done(g,pk.map(i=>ws[i]).join(" "))}}
+ $("ck").onclick=()=>{const _u=pk.map(i=>ws[i]).join(" ");const g=(it.alt&&it.alt.some(a=>(typeof window.__sentEq==="function"?window.__sentEq(_u,a):_u===a)))||(typeof window.__sentEq==="function"?window.__sentEq(_u,it.f):_u===it.f);$("ck").classList.add("hidden");const lesson=grammarFeedback(it,pk.map(i=>ws[i]).join(" "));const listen=document.createElement("button");listen.className="spk";listen.textContent="🔊 听发音";listen.onclick=()=>say(it.f);lesson.appendChild(listen);$("r").replaceChildren(lesson);if(st().say)say(it.f);done(g,pk.map(i=>ws[i]).join(" "))}}
 const pron=()=>run("发音",[...sh(R).slice(0,4).map(([f,z])=>({t:"r",f,z})),...sh(D).slice(0,4).map(([q,a,o,z])=>({t:"d",q,a,o,z}))],rPron);
 const gram=()=>run("语法",sh(G).slice(0,7),rGram);
 const _home=home;
@@ -2040,7 +2042,7 @@ function vocabMenu(){const sg=ld("frs_st",{}),wr=ld("frs_w",[]),fav=ld("frs_fav"
   CATS.forEach(c=>{const tot=catTotalStages(c.id),done=catDoneStages(c.id);const words=TW().filter(w=>w.cat&&w.cat.indexOf(c.id)===0).length;h+=mb(c.icon,c.name,words+" 个词 · "+c.lessons.length+" 课 · 通关 "+done+"/"+tot,fns.length);fns.push(()=>catMap(c.id));});
  }else{
   // 属灵方向：按级别（原样）。
-  LV.forEach(k=>{const ws=TW().filter(w=>w.lv===k),n=Math.ceil(ws.length/10);if(n){let d=0;for(let j=1;j<=n;j++)if(sg[k+"-"+j]&&sg[k+"-"+j].p)d++;const learned=ws.filter(w=>seen[w.id]).length,mastered=ws.filter(w=>(m[w.id]||0)>=2).length;h+=mb(k,`${n} 关`,`学过 ${learned}/${ws.length} · 掌握 ${mastered} · 通关 ${d}/${n}`,fns.length);fns.push(()=>stageMap(k));}});
+  LV.forEach(k=>{const ws=TW().filter(w=>w.lv===k),n=Math.ceil(ws.length/10);if(n){let d=0;for(let j=1;j<=n;j++)if(sg[k+"-"+j]&&sg[k+"-"+j].p)d++;const learned=ws.filter(w=>seen[w.id]).length,mastered=ws.filter(w=>(m[w.id]||0)>=2).length;h+=mb(k,`${n} 关`,`学过 ${learned}/${ws.length} · 掌握 ${mastered}（同一词选择+拼写/句子两遍都对） · 通关 ${d}/${n}`,fns.length);fns.push(()=>stageMap(k));}});
  }
  h+=mb("🔀","混合复习","随机抽取，优先薄弱词",fns.length);fns.push(()=>start("_all"));
  h+=mb("📒","错词本",TW().filter(w=>wr.includes(w.id)).length+" 条",fns.length);fns.push(()=>start("_w"));
@@ -2064,8 +2066,8 @@ function gramS(t){sv("frs_last",{m:"g"});const f=G.filter(x=>t==="a"?x.t==="c":t
 function exp(){const o={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith(PX))o[k.slice(PX.length)]=localStorage.getItem(k)}}catch(e){}return btoa(unescape(encodeURIComponent(JSON.stringify({n:CUR,d:o}))))}
 function imp(s){try{const j=JSON.parse(decodeURIComponent(escape(atob(s.trim()))));Object.entries(j.d).forEach(([k,v])=>gs(PX+k,v));return true}catch(e){return false}}
 function me(){if(!CUR)return welcome();show_("home");const g=st(),m=ld("frs_m",{}),sg=ld("frs_st",{}),stars=Object.values(sg).reduce((a,x)=>a+x.s,0);
- $("home").innerHTML=`<div class="card"><h3 style="margin:0">👤 ${esc(CUR)}</h3><p>⭐ ${g.xp} XP · Lv.${Math.floor(g.xp/100)+1}<br>🔥 连续学习 ${g.streak} 天<br>📘 已掌握 ${Object.values(m).filter(x=>x>=2).length} 个词<br>🏆 通关 ${Object.values(sg).filter(x=>x.p).length} 关 · ${stars} ★</p><label style="display:flex;gap:10px;align-items:center;margin:14px 0"><input type="checkbox" id="autoNext" ${g.autoNext?"checked":""}>答题后 5 秒自动进入下一题（默认关闭）</label><button class="btn alt" id="sw" style="margin-left:0">切换 / 新建用户</button></div><div class="card" style="margin-top:14px"><b>备份与换设备</b><p class="sub">进度只保存在本机浏览器。换设备前先导出，再到新设备导入。</p><button class="btn" id="ex">导出进度码</button><textarea class="ans" id="bx" rows="3" placeholder="导出的进度码显示在这里；导入时请粘贴进度码"></textarea><button class="btn alt" id="im" style="margin-left:0">导入进度码</button></div>`;
- $("autoNext").onchange=()=>{const x=st();x.autoNext=$("autoNext").checked;sv("frs_g",x);toast(x.autoNext?"已开启自动跳题":"已关闭自动跳题")};$("sw").onclick=()=>{CUR=null;PX="";gs("frs_cur","");welcome()};$("ex").onclick=()=>{$("bx").value=exp();$("bx").select()};$("im").onclick=()=>{toast(imp($("bx").value)?"导入成功":"进度码无效");home()}}
+ $("home").innerHTML=`<div class="card"><h3 style="margin:0">👤 ${esc(CUR)}</h3><p>⭐ ${g.xp} XP · Lv.${Math.floor(g.xp/100)+1}<br>🔥 连续学习 ${g.streak} 天<br>📘 已掌握 ${Object.values(m).filter(x=>x>=2).length} 个词（同一词选择和拼写/句子两遍都答对）<br>🏆 通关 ${Object.values(sg).filter(x=>x.p).length} 关 · ${stars} ★</p><label style="display:flex;gap:10px;align-items:center;margin:14px 0"><input type="checkbox" id="autoNext" ${g.autoNext?"checked":""}>答题后 5 秒自动进入下一题（默认关闭）</label><label style="display:flex;gap:10px;align-items:center;margin:14px 0"><input type="checkbox" id="sayToggle" ${g.say?"checked":""}>自动朗读发音（浏览器不支持时会提示一次，不会反复弹出）</label><label style="display:flex;gap:10px;align-items:center;margin:14px 0"><input type="checkbox" id="celeToggle" ${g.celebrate===false?"":"checked"}>庆祝动效（Yuki 烟花和大字弹窗；关闭后改为右下角小提示）</label><button class="btn alt" id="sw" style="margin-left:0">切换 / 新建用户</button></div><div class="card" style="margin-top:14px"><b>备份与换设备</b><p class="sub">进度只保存在本机浏览器。换设备前先导出，再到新设备导入。</p><button class="btn" id="ex">导出进度码</button><textarea class="ans" id="bx" rows="3" placeholder="导出的进度码显示在这里；导入时请粘贴进度码"></textarea><button class="btn alt" id="im" style="margin-left:0">导入进度码</button></div>`;
+ $("autoNext").onchange=()=>{const x=st();x.autoNext=$("autoNext").checked;sv("frs_g",x);toast(x.autoNext?"已开启自动跳题":"已关闭自动跳题")};$("sayToggle").onchange=()=>{const x=st();x.say=$("sayToggle").checked?1:0;sv("frs_g",x);toast(x.say?"已开启自动朗读":"已关闭自动朗读")};$("celeToggle").onchange=()=>{const x=st();x.celebrate=$("celeToggle").checked;sv("frs_g",x);document.body.classList.toggle("no-celebrations",!x.celebrate);toast(x.celebrate?"已开启庆祝动效":"已关闭庆祝动效")};$("sw").onclick=()=>{CUR=null;PX="";gs("frs_cur","");welcome()};$("ex").onclick=()=>{$("bx").value=exp();$("bx").select()};$("im").onclick=()=>{toast(imp($("bx").value)?"导入成功":"进度码无效");home()}}
 {const c0=gl("frs_cur");if(c0)login(c0);const t=document.querySelector("h1");t.style.cursor="pointer";t.onclick=()=>home();home()}
 </script>
 
@@ -2550,15 +2552,16 @@ function placeBuild(){
   const qs=[];
   function vocabQ(pool){
     const w=pool[0];
-    const ds=sh(pool.filter(o=>o.id!==w.id)).slice(0,3);
+    const ds=sh(pool.filter(o=>o.id!==w.id&&o.p===w.p)).concat(sh(pool.filter(o=>o.id!==w.id&&o.p!==w.p))).slice(0,3);
     const opts=sh([w].concat(ds)).map(o=>o.z);
     return {q:"« "+pf(w)+" » 是什么意思？",opts:opts,a:opts.indexOf(w.z),why:"« "+pf(w)+" » 的意思是 "+w.z+"。"};
   }
   const a1=sh(TW().filter(w=>w.lv==="A1"));
-  const a2=sh(TW().filter(w=>w.lv==="A2"));
+  const b1=sh(TW().filter(w=>w.lv==="B1"));
+  const b2=sh(TW().filter(w=>w.lv==="B2"));
   qs.push(vocabQ(a1));
-  qs.push(vocabQ(a1.slice(1)));
-  qs.push(vocabQ(a2));
+  qs.push(vocabQ(b1));
+  qs.push(vocabQ(b2));
   PLACE_FIXED.forEach(q=>qs.push(q));
   return qs;
 }
@@ -2577,7 +2580,7 @@ function placeApply(level,score){
 function placeIntro(retake){
   show_("home");
   let h='<div class="card"><h3 style="margin:0 0 8px">📝 入学小测</h3>'
-    +'<p>10 道题，大约 3 分钟，测测你的法语水平，帮你跳到合适的级别开始。不用紧张，答错也没关系！</p>'
+    +'<p>10 道题，大约 3 分钟：词汇从 A1 到 B2 都有，另加 7 道语法题，帮你跳到合适的级别开始。不用紧张，答错也没关系！测完才计分，中途退出不计 XP。</p>'
     +'<p class="sub">0–3 分 → A1 从头开始 · 4–6 分 → A2 · 7–10 分 → B1</p>'
     +'<button class="btn" id="plStart">开始测试</button> '
     +'<button class="btn alt" id="plSkip" style="margin-left:0">'+(retake?"返回":"不用了，从 A1 开始")+'</button></div>';
@@ -2609,19 +2612,19 @@ function placeRender(){
     if(b.disabled)return;
     opts.forEach(x=>{x.disabled=true});
     const pick=+b.dataset.o,ok=pick===q.a;
-    if(ok){b.style.background="#d9f2dd";try{if(typeof gain==="function")gain(10)}catch(e){}PQ.score++;}
+    if(ok){b.style.background="#d9f2dd";PQ.score++;}
     else{b.style.background="#fbd9d9";const right=opts[q.a];if(right)right.style.background="#d9f2dd";}
-    $("pqWhy").innerHTML='<p style="margin:0"><b>'+(ok?"答对了！+10 XP":"答错了")+'</b><br>'+esc(q.why)+'</p>';
+    $("pqWhy").innerHTML='<p style="margin:0"><b>'+(ok?"答对了！":"答错了")+'</b><br>'+esc(q.why)+'</p>';
     const nx=$("pqNext");nx.style.display="";nx.onclick=()=>{PQ.qi++;placeRender();};
   }});
 }
 function placeFinish(){
   const sc=PQ.score,level=placeLevel(sc);
-  placeApply(level,sc);
+  placeApply(level,sc);try{const _g=st();_g.xp+=sc*10;sv("frs_g",_g);if(typeof hud==="function")hud();}catch(e){}
   const msg=level==="A1"?"从 A1 第 1 关开始，Yuki 陪你一步一步来！":level==="A2"?"A1 已经帮你解锁了，直接从 A2 开始吧！":"很厉害！A1、A2 都解锁了，从 B1 开始挑战吧！";
   show_("home");
   $("home").innerHTML='<div class="card"><img src="'+(YUKI_STICKERS.trophy||YUKI_STICKERS.bravo)+'" alt="Yuki" style="width:120px;height:120px;object-fit:contain">'
-    +'<h3 style="margin:8px 0">🎉 测试完成！答对 '+sc+' / '+PQ.qs.length+' 题</h3>'
+    +'<h3 style="margin:8px 0">🎉 测试完成！答对 '+sc+' / '+PQ.qs.length+' 题 · +'+(sc*10)+' XP（测完才计分）</h3>'
     +'<p><b>你的起点：'+level+'</b></p><p class="sub">'+msg+'</p>'
     +'<button class="btn" id="plGo">开始学习</button> <button class="btn alt" id="plHome" style="margin-left:0">回首页</button></div>';
   $("plGo").onclick=()=>stageMap(level);
@@ -3892,10 +3895,10 @@ function sentDistractors(s){
   const same=(w)=>pf(w).toLowerCase()!==s.a.toLowerCase();
   let ds=sh(TW().filter(w=>w.lv===s.lv&&w.p===s.p&&same(w))).slice(0,3).map(w=>pf(w));
   if(ds.length<3){
-    const more=sh(TW().filter(w=>w.lv===s.lv&&same(w)&&ds.indexOf(pf(w))<0)).slice(0,3-ds.length).map(w=>pf(w));
+    const more=sh(TW().filter(w=>w.p===s.p&&same(w)&&ds.indexOf(pf(w))<0)).slice(0,3-ds.length).map(w=>pf(w));
     ds=ds.concat(more);
   }
-  if(ds.length<3){
+  if(ds.length<3){     const more=sh(TW().filter(w=>w.lv===s.lv&&same(w)&&ds.indexOf(pf(w))<0)).slice(0,3-ds.length).map(w=>pf(w));     ds=ds.concat(more);   }   if(ds.length<3){
     const more=sh(TW().filter(w=>same(w)&&ds.indexOf(pf(w))<0)).slice(0,3-ds.length).map(w=>pf(w));
     ds=ds.concat(more);
   }
@@ -4369,6 +4372,127 @@ function startCatStage(catId,li,si){
   try{const bar=document.querySelector("#play .bar");if(bar&&!bar.querySelector("#playHearts")){const sp=document.createElement("span");sp.className="hearts-pill";sp.id="playHearts";if(typeof duoHeartsCount==="function")sp.textContent="❤️".repeat(duoHeartsCount())+"🤍".repeat(5-duoHeartsCount());bar.appendChild(sp);}const ex=document.querySelector("#exitVocab");if(ex)ex.textContent="← 返回"+c.name+"地图";}catch(e){}
 }
 
+</script>
+
+<style id="fix-celebrations-2026-11-17">
+/* 修复：庆祝弹窗改为右下角小气泡，不遮挡题目和导航；大字/全屏烟花不再出现 */
+body .yuki-pop{top:auto!important;bottom:16px!important;left:auto!important;right:16px!important;margin:0!important;width:auto!important;max-width:min(300px,calc(100vw - 32px))!important;min-height:0!important;padding:8px 12px 8px 8px!important;z-index:30!important}
+body .yuki-pop img{width:52px!important;height:52px!important}
+body .yuki-pop span{font-size:.92rem!important}
+body .fireworks{inset:auto!important;right:0!important;bottom:0!important;width:280px!important;height:200px!important;z-index:29!important}
+body .fireworks.big .firework-spark{font-size:clamp(20px,3vw,34px)!important}
+body .big-streak-text{display:none!important}
+body .yuki-run{display:none!important}
+body.no-celebrations .yuki-pop,body.no-celebrations .fireworks,body.no-celebrations .big-streak-text,body.no-celebrations .yuki-run{display:none!important}
+.speech-note{position:fixed;right:16px;bottom:16px;z-index:40;max-width:min(320px,calc(100vw - 32px));background:#fff;color:#1f2328;border:1px solid #e1ddd3;border-radius:12px;padding:10px 14px;font-size:.9rem;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+</style>
+<script id="fix-2026-11-17">
+/* 2026-11-17 修复补丁（8 项问题）：句子多答案、发音容错、庆祝小气泡+开关。
+   只覆盖已有函数，不改动原有学习流程。 */
+(function(){
+"use strict";
+/* --- 1. 句子等价判断：大小写/重音/标点归一；副词 de nouveau / déjà 等位置可移动 --- */
+function normSent(s){
+  return String(s||"").replace(/[’‘]/g,"'").normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/\s+/g," ").trim().replace(/[.?!]+$/,"").toLowerCase();
+}
+var MOVABLE=["de nouveau","deja","encore","souvent","toujours","parfois","souvent"];
+function sentEq(user,correct){
+  var u=normSent(user), c=normSent(correct);
+  if(!u||!c) return false;
+  if(u===c) return true;
+  for(var i=0;i<MOVABLE.length;i++){
+    var adv=MOVABLE[i];
+    if(u.indexOf(adv)>=0 && c.indexOf(adv)>=0){
+      var strip=function(s){ return s.split(adv).join(" ").replace(/\s+/g," ").trim(); };
+      if(strip(u)===strip(c)) return true;
+    }
+  }
+  return false;
+}
+window.__sentEq=sentEq;
+
+/* --- 4. 发音容错：只提示一次的小字条，不挡顶栏；失败后自动朗读静默停用 --- */
+var speechUnsupported=false, speechNoteShown=false;
+function speechNote(msg){
+  if(speechNoteShown) return; speechNoteShown=true;
+  var n=document.createElement("div"); n.className="speech-note"; n.textContent=msg;
+  document.body.appendChild(n); setTimeout(function(){ try{ n.remove(); }catch(e){ try{ if(n.parentNode) n.parentNode.removeChild(n); }catch(e2){} } },7000);
+}
+function frenchVoice(){
+  try{
+    var vs=(window.speechSynthesis)?speechSynthesis.getVoices():[];
+    if(vs && vs.length){
+      for(var i=0;i<vs.length;i++){ if(/^fr/i.test(vs[i].lang||"")) return vs[i]; }
+      return null; /* 语音列表已加载，但没有法语语音 */
+    }
+  }catch(e){}
+  return undefined; /* 语音列表还没加载完，先照常尝试 */
+}
+say=function(t){
+  if(!window.speechSynthesis || speechUnsupported){
+    speechNote("此浏览器不支持语音朗读（没有法语语音）。学习和答题不受影响；换一个支持法语语音的浏览器再试。");
+    return false;
+  }
+  var fv=frenchVoice();
+  if(fv===null){
+    speechUnsupported=true;
+    speechNote("此浏览器没有法语语音，无法朗读。学习和答题不受影响；换一个支持法语语音的浏览器再试。");
+    return false;
+  }
+  try{
+    speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(t);
+    u.lang=(fv&&fv.lang)||"fr-FR"; if(fv) u.voice=fv; u.rate=.9;
+    u.onerror=function(){
+      speechUnsupported=true;
+      speechNote("这次朗读没有成功，自动朗读已暂停。学习和答题不受影响；换一个支持法语语音的浏览器再试。");
+    };
+    speechSynthesis.speak(u); return true;
+  }catch(e){
+    speechUnsupported=true;
+    speechNote("这次朗读没有成功，自动朗读已暂停。学习和答题不受影响。");
+    return false;
+  }
+};
+try{
+  if(typeof pronMenu==="function"){
+    var pm0=pronMenu;
+    pronMenu=function(){
+      var r=pm0.apply(this,arguments);
+      if(!window.speechSynthesis && !speechNoteShown)
+        speechNote("提示：当前浏览器不支持语音朗读，朗读按钮会提示一次，学习和答题不受影响。");
+      return r;
+    };
+  }
+}catch(e){}
+
+/* --- 5. 庆祝：只在右下角小气泡；可关闭；大连击不再整屏大字/大 Yuki 跑过 --- */
+function celebrationsOn(){
+  try{ var g=(typeof st==="function")?st():{}; return g.celebrate!==false; }
+  catch(e){ return true; }
+}
+function applyCelebrationClass(){
+  try{ document.body.classList.toggle("no-celebrations",!celebrationsOn()); }catch(e){}
+}
+try{
+  var fw0=fireworkCelebration, ym0=yukiMoment, bs0=bigStreakCelebration;
+  fireworkCelebration=function(){ if(!celebrationsOn()) return; return fw0.apply(this,arguments); };
+  yukiMoment=function(){ if(!celebrationsOn()) return; return ym0.apply(this,arguments); };
+  bigStreakCelebration=function(count,cheer){
+    if(!celebrationsOn()) return;
+    try{ fireworkCelebration(count,cheer&&cheer.text,cheer&&cheer.image,false); }catch(e){}
+    try{ yukiMoment(cheer&&cheer.text,cheer&&cheer.image); }catch(e){}
+  };
+}catch(e){}
+try{
+  if(typeof home==="function"){
+    var home0=home;
+    home=function(){ var r=home0.apply(this,arguments); applyCelebrationClass(); return r; };
+  }
+}catch(e){}
+applyCelebrationClass();
+})();
 </script>
 </body>
 </html>
