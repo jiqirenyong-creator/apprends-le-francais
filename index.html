@@ -4512,7 +4512,7 @@ applyCelebrationClass();
 // ---- Yuki 开场动画 + 总结页底部操作条 + 我的收藏（2026-11-17 新增） ----
 // 开场视频 yuki-intro.mp4 已含萌萌的中文配音，不再另加语音合成配音。
 var YUKI_INTRO_LINE = "Hello，我是 Yuki，你的法语学习小伙伴，我将陪伴你完成接下来的法语学习之旅。希望你能愉快地学习。加油哦。";
-var YUKI_INTRO_VIDEO = "yuki-intro.mp4";
+var YUKI_INTRO_VIDEO = "yuki-intro.mp4?v=3"; // 加版本号，绕开部署窗口期可能缓存住的 404
 function yukiIntroEnabled(){ try{ return st().intro !== false; }catch(e){ return true; } }
 function yukiIntroShown(){ try{ return sessionStorage.getItem("yukiIntroShown") === "1"; }catch(e){ return false; } }
 function markYukiIntroShown(){ try{ sessionStorage.setItem("yukiIntroShown", "1"); }catch(e){} }
@@ -4569,17 +4569,27 @@ function showYukiIntro(force){
     var doFallback = function(){ if(fallbackDone) return; fallbackDone = true; showYukiIntroFallback(ov); };
     var retried = false;
     video.addEventListener("error", function(){
-      if(!retried){ retried = true; setTimeout(function(){ try{ video.load(); var pr = video.play(); if(pr && pr.catch) pr.catch(function(){}); }catch(e){} }, 1000); return; }
+      if(!retried){ retried = true; setTimeout(function(){ try{ video.src = YUKI_INTRO_VIDEO + "&t=" + Date.now(); video.load(); var pr = video.play(); if(pr && pr.catch) pr.catch(function(){}); }catch(e){} }, 1000); return; }
       doFallback();
     });
     video.addEventListener("canplay", function(){ try{ clearTimeout(noSourceTimer); }catch(e){} });
     video.addEventListener("ended", function(){ closeYukiIntro(); });
     ov.querySelector("#yukiIntroSkip").onclick = function(){ closeYukiIntro(); };
     playBtn.onclick = function(){ playBtn.style.display = "none"; try{ var pr = video.play(); if(pr && pr.catch) pr.catch(function(){ playBtn.style.display = ""; }); }catch(e){ playBtn.style.display = ""; } };
-    try{
-      var pr0 = video.play();
-      if(pr0 && pr0.catch) pr0.catch(function(){ if(!fallbackDone) playBtn.style.display = ""; });
-    }catch(e){ playBtn.style.display = ""; }
+    (function startIntroPlay(){
+      var pr;
+      try{ pr = video.play(); }catch(e){ pr = null; }
+      if(pr && pr.catch) pr.catch(function(){
+        // 带声音自动播放被浏览器拦了（常见于直接打开、没有点按手势）：改静音播，点一下开声音
+        try{
+          video.muted = true;
+          var pr2 = video.play();
+          if(pr2 && pr2.catch) pr2.catch(function(){ if(!fallbackDone) playBtn.style.display = ""; });
+          playBtn.style.display = "";
+          playBtn.textContent = "🔊 点一下开声音";
+        }catch(e){ if(!fallbackDone) playBtn.style.display = ""; }
+      });
+    })();
     // 视频源缺失时 error 事件未必触发，8 秒后复查一次（手机网络慢，多给点时间）
     var noSourceTimer = setTimeout(function(){ try{ if(video.readyState === 0 && video.networkState === 3) doFallback(); }catch(e){} }, 8000);
   }catch(e){}
