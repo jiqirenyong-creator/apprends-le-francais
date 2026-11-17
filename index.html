@@ -62,11 +62,13 @@ h1{letter-spacing:.02em;color:#26334a}h1:before{content:"🐾";display:inline-gr
 #nx,#nx2{font-size:1.04rem}
 @media(max-width:600px){.wrap{padding:14px 12px 32px}.hud{gap:8px;flex-wrap:wrap}.yuki-avatar{width:42px;height:42px}.yuki-pop{right:10px;bottom:10px}.yuki-pop img{width:96px;height:96px}.yuki-pop span{font-size:.95rem}}
 /* Yuki 开场动画 + 总结页底部操作条（2026-11-17 新增） */
-#yukiIntroOverlay{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;background:linear-gradient(160deg,#efeaf7,#e3d9f2 55%,#f6e8f3)}
-#yukiIntroOverlay video{width:min(92vw,560px);max-height:62vh;border-radius:20px;box-shadow:0 16px 40px rgba(67,51,83,.25);background:#000}
+#yukiIntroOverlay{position:fixed;inset:0;z-index:100;background:#000;overflow:hidden}
+#yukiIntroOverlay .yuki-intro-video-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+#yukiIntroOverlay video{width:100%;height:100%;object-fit:cover;display:block;background:#000}
 #yukiIntroOverlay .yuki-intro-video-wrap img{width:min(72vw,260px);height:auto;border-radius:20px;box-shadow:0 16px 40px rgba(67,51,83,.25)}
-.yuki-intro-bubble{max-width:min(92vw,560px);background:#fff;border-radius:16px;padding:12px 16px;font-size:1.05rem;line-height:1.6;color:#514066;box-shadow:0 8px 20px rgba(67,51,83,.12);text-align:center}
-#yukiIntroSkip{position:absolute;top:calc(12px + env(safe-area-inset-top));right:14px}
+#yukiIntroOverlay .yuki-intro-bubble{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom));width:min(92vw,560px);background:rgba(255,255,255,.94);border-radius:16px;padding:12px 16px;font-size:1.05rem;line-height:1.6;color:#514066;box-shadow:0 8px 20px rgba(0,0,0,.28);text-align:center;z-index:2}
+#yukiIntroOverlay #yukiIntroPlay{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom));z-index:2}
+#yukiIntroSkip{position:absolute;top:calc(12px + env(safe-area-inset-top));right:14px;z-index:2}
 .end-stickybar{display:none}
 .end-dupbar{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 6px}
 .end-dupbar .btn{flex:1 1 auto;margin:0}
