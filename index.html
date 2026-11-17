@@ -4575,7 +4575,7 @@ function showYukiIntro(force){
     video.addEventListener("canplay", function(){ try{ clearTimeout(noSourceTimer); }catch(e){} });
     video.addEventListener("ended", function(){ closeYukiIntro(); });
     ov.querySelector("#yukiIntroSkip").onclick = function(){ closeYukiIntro(); };
-    playBtn.onclick = function(){ playBtn.style.display = "none"; try{ var pr = video.play(); if(pr && pr.catch) pr.catch(function(){ playBtn.style.display = ""; }); }catch(e){ playBtn.style.display = ""; } };
+    playBtn.onclick = function(){ playBtn.style.display = "none"; try{ video.muted = false; var pr = video.play(); if(pr && pr.catch) pr.catch(function(){ playBtn.style.display = ""; }); }catch(e){ playBtn.style.display = ""; } };
     (function startIntroPlay(){
       var pr;
       try{ pr = video.play(); }catch(e){ pr = null; }
