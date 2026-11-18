@@ -17,6 +17,8 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Segoe UI","Mi
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
 .lv{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:9px;font:inherit;cursor:pointer}
 .lv:hover,.opt:hover:not(:disabled){border-color:var(--acc)}.lv b{font-size:1.15rem;color:var(--acc);margin-right:10px}.lv span{color:var(--mute);font-size:.88rem}
+#home [data-track]{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:4px}
+#home [data-track] span{width:100%}
 .bar{display:flex;justify-content:space-between;font-size:.92rem;margin-bottom:8px;color:var(--mute)}
 .track{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:14px}.fill{height:100%;background:var(--acc)}
 .tag{display:inline-block;background:var(--accd);color:var(--acc);border-radius:6px;padding:1px 8px;font-size:.8rem;margin:0 6px 6px 0}
@@ -2135,9 +2137,9 @@ function showTrackPicker(onDone){
   }).join("");
   $("home").innerHTML =
     '<div class="card" style="margin-bottom:14px"><h3 style="margin:0 0 8px">👋 先选一个学习方向</h3>' +
-    '<p class="sub" style="margin:0">这个网站是给朋友们学的，有人想学日常法语，有人想学属灵法语。选一次就记住，之后随时可以在首页或“我的”里改。</p>' +
-    '<p class="sub" style="margin:8px 0 0">日常方向按生活场景学（问候、银行、医院等），属灵方向按级别学。发音和语法暂时还是原来的内容。</p></div>' +
-    cards;
+    '<p class="sub" style="margin:0">有人想学日常法语，有人想学属灵法语。选一次就记住，之后随时可以在首页或“我的”里改。</p></div>' +
+    cards +
+    '<p class="sub" style="margin:10px 2px 0;font-size:.85rem">发音和语法暂时还是原来的内容。</p>';
   document.querySelectorAll("#home [data-track]").forEach(function(b){
     b.onclick = function(){
       const t = b.dataset.track;
