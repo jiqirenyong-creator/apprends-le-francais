@@ -2080,7 +2080,7 @@ const _fin=fin;fin=function(){_fin();const t=S.stage;if(!t)return;const n=S.qs.l
  $("a").onclick=()=>{if(isCat)startCatStage(t.cat,t.lesson,t.n);else startStage(t.k,t.n);};$("h").onclick=()=>{if(isCat&&typeof catMap==="function")catMap(t.cat);else stageMap(t.k);};$("h").textContent="返回地图";
  if(p&&t.n<tot){const b=document.createElement("button");b.className="btn";b.textContent="下一关 ▶";b.onclick=()=>{if(isCat)startCatStage(t.cat,t.lesson,t.n+1);else startStage(t.k,t.n+1);};$("a").before(b);}
  else if(p&&isCat&&t.lesson<3){const b=document.createElement("button");b.className="btn";b.textContent="下一课 ▶";b.onclick=()=>startCatStage(t.cat,t.lesson+1,1);$("a").before(b);}};
-function pronMenu(){sub("🎤 练习发音",mb("📖","朗读跟读","听法语发音，再跟读打分",0)+mb("💬","对话回复","听问句，选回复并跟读",1)+mb("🎯","综合练习","朗读 + 对话",2),[()=>pronS("r"),()=>pronS("d"),()=>pronS()])}
+function pronMenu(){const items=[mb("📖","朗读跟读","听法语发音，再跟读打分",0),mb("💬","对话回复","听问句，选回复并跟读",1),mb("🎯","综合练习","朗读 + 对话",2)];const fns=[()=>pronS("r"),()=>pronS("d"),()=>pronS()];if(scenVisible()){items.push(mb("📖","阅读理解","读短文，回答问题 · DELF 风格",3));fns.push(()=>readMenu())}sub("🎤 练习发音",items.join(""),fns)}
 function gramMenu(){sub("📗 学习语法",mb("🗺️","语法路线","一关一个知识点，按顺序闯关",0)+mb("🧩","造句","点词块按顺序拼句",1)+mb("✏️","选词填空","选出正确的形式",2)+mb("📐","语法结构","判断时态与结构",3)+mb("🔀","综合练习","基础与进阶混合抽题",4)+mb("🚀","进阶语法","虚拟式 · 时态 · 代词配合",5)+mb("💬","句子填空","把单词放进句子里练",6),[()=>{if(typeof gramMap==="function")gramMap();},()=>gramS("b"),()=>gramS("c"),()=>gramS("s"),()=>gramS(),()=>gramS("a"),()=>{if(typeof gramSent==="function")gramSent();}])}
 function pronS(t){sv("frs_last",{m:"p"});run("发音",[...(t==="d"?[]:sh(R).slice(0,t?6:4).map(([f,z])=>({t:"r",f,z}))),...(t==="r"?[]:sh(D).slice(0,t?5:4).map(([q,a,o,z])=>({t:"d",q,a,o,z})))],rPron)}
 function gramS(t){sv("frs_last",{m:"g"});const f=G.filter(x=>t==="a"?x.t==="c":t==="b"?x.t==="b":t==="c"?x.t==="c"&&x.q.includes("___"):t==="s"?x.t==="c"&&!x.q.includes("___"):1);run("语法",sh(f).slice(0,8),rGram)}
@@ -2369,6 +2369,123 @@ function scenQuizRender(){
     }catch(e){}
   };
 })();
+
+// 阅读理解（日常方向，DELF A1 风格）：6 篇原创短文，每篇带中文翻译和选择题。
+// 短文为原创写法，参考了 DELF A1 阅读理解的常见题型（传单、菜单、通知、邮件、小广告），未复制任何教材原文。
+const READ=[
+{id:"supermarche",icon:"🛒",fr:"Offres de la semaine au supermarché",zh:"超市传单",lv:"A1",
+text:"Supermarché Bon Marché — Offres de la semaine !\nLe supermarché est ouvert du lundi au samedi, de 8h30 à 20h30. Le dimanche, il est fermé.\nCette semaine, les tomates sont à 1 euro 50 le kilo. Les pommes sont à 2 euros le kilo. Le pain est à 1 euro.\nLe lait est à 1 euro 20 le litre. Le fromage est à 5 euros le kilo.\nAvec la carte de fidélité, vous avez 20 % de réduction sur les fruits et les légumes.\nVenez nombreux ! Le parking est gratuit pendant une heure.",
+textZh:"好集市超市——本周优惠！\n超市周一至周六营业，8点30分到20点30分。周日休息。\n本周，番茄每公斤1欧元50分，苹果每公斤2欧元，面包1欧元。\n牛奶每升1欧元20分，奶酪每公斤5欧元。\n使用会员卡，水果和蔬菜享受8折优惠。\n欢迎大家光临！停车场免费停车一小时。",
+quiz:[
+{q:"超市星期天开门吗？",opts:["不开门，星期天休息","8点30分开门","20点30分开门","只开上午"],a:0,why:"传单上写：Le dimanche, il est fermé（星期天休息）。"},
+{q:"番茄多少钱一公斤？",opts:["1 欧元","1 欧元 50 分","2 欧元","5 欧元"],a:1,why:"Les tomates sont à 1 euro 50 le kilo（番茄每公斤1欧元50分）。"},
+{q:"用会员卡买水果和蔬菜有什么优惠？",opts:["打八折","免费","买一送一","半价"],a:0,why:"Avec la carte de fidélité, vous avez 20 % de réduction（用会员卡有20%的折扣，也就是打八折）。"},
+{q:"停车场免费停多久？",opts:["30 分钟","1 小时","2 小时","一整天"],a:1,why:"Le parking est gratuit pendant une heure（停车场免费一小时）。"}]},
+{id:"cafe",icon:"☕",fr:"La carte du Café de la Place",zh:"咖啡馆菜单",lv:"A1",
+text:"Bienvenue au Café de la Place !\nLe café est dans le centre-ville, près de la gare.\nNous sommes ouverts tous les jours de 7h à 22h, sauf le lundi.\nUn café : 2 euros. Un thé : 2 euros 50. Un jus d'orange : 3 euros.\nUn croissant : 1 euro 50. Un sandwich au fromage : 5 euros. Une salade : 8 euros.\nLe midi, nous servons un menu à 12 euros : une salade, un plat et un dessert.\nLe soir, le café ferme à 22 heures. Venez avec vos amis !",
+textZh:"欢迎来到广场咖啡馆！\n咖啡馆在市中心，火车站附近。\n我们每天7点到22点营业，星期一除外。\n一杯咖啡：2欧元；一杯茶：2欧元50分；一杯橙汁：3欧元。\n一个牛角包：1欧元50分；一个奶酪三明治：5欧元；一份沙拉：8欧元。\n中午我们提供12欧元的套餐：一份沙拉、一道主菜和一份甜点。\n晚上咖啡馆22点关门。带上朋友一起来吧！",
+quiz:[
+{q:"咖啡馆星期一开门吗？",opts:["不开门，星期一休息","7 点开门","22 点开门","只开上午"],a:0,why:"Nous sommes ouverts tous les jours…, sauf le lundi（每天都营业，星期一除外）。"},
+{q:"一杯茶多少钱？",opts:["2 欧元","2 欧元 50 分","3 欧元","5 欧元"],a:1,why:"Un thé : 2 euros 50（一杯茶2欧元50分）。"},
+{q:"中午的套餐多少钱？包含什么？",opts:["12 欧元：沙拉、主菜和甜点","8 欧元：只有沙拉","5 欧元：三明治","12 欧元：咖啡和牛角包"],a:0,why:"Le midi, nous servons un menu à 12 euros : une salade, un plat et un dessert（中午12欧元套餐：沙拉、主菜和甜点）。"},
+{q:"咖啡馆晚上几点关门？",opts:["20 点","21 点","22 点","23 点"],a:2,why:"Le café ferme à 22 heures（咖啡馆22点关门）。"}]},
+{id:"gare",icon:"🚆",fr:"Un avis à la gare",zh:"火车站通知",lv:"A1",
+text:"Attention, voyageurs !\nLe train de 10h15 pour Lyon part avec 20 minutes de retard. Il part à 10h35 du quai numéro 4.\nLe train de 10h30 pour Paris est annulé. Les voyageurs peuvent prendre le train de 11h30.\nLes billets sont en vente au guichet et sur les bornes automatiques.\nLe guichet est ouvert de 6h à 20h. Pour les informations, allez à l'accueil, près de l'entrée.\nLe café de la gare est ouvert de 7h à 19h.\nMerci de votre compréhension.",
+textZh:"旅客们请注意！\n10点15分开往里昂的火车晚点20分钟，10点35分从4号站台出发。\n10点30分开往巴黎的火车取消了，旅客可以改乘11点30分的火车。\n车票在售票窗口和自动售票机上出售。\n售票窗口6点到20点开放。如需咨询，请到入口附近的问询处。\n车站咖啡馆7点到19点营业。\n感谢您的理解。",
+quiz:[
+{q:"开往里昂的火车几点出发？",opts:["10 点 15 分","10 点 30 分","10 点 35 分","11 点 30 分"],a:2,why:"Il part à 10h35（10点35分出发），因为晚点了20分钟。"},
+{q:"开往里昂的火车在几号站台？",opts:["1 号站台","2 号站台","4 号站台","6 号站台"],a:2,why:"Il part du quai numéro 4（从4号站台出发）。"},
+{q:"10 点 30 分开往巴黎的火车怎么了？",opts:["晚点 20 分钟","取消了，可以改乘 11 点 30 分的火车","改到 4 号站台","正常出发"],a:1,why:"Le train de 10h30 pour Paris est annulé（取消了）。Les voyageurs peuvent prendre le train de 11h30（旅客可以改乘11点30分的火车）。"},
+{q:"售票窗口几点开门？",opts:["6 点","7 点","8 点","10 点"],a:0,why:"Le guichet est ouvert de 6h à 20h（售票窗口6点到20点开放）。"}]},
+{id:"hotel",icon:"🏨",fr:"Votre réservation à l'Hôtel du Parc",zh:"酒店确认邮件",lv:"A1",
+text:"Bonjour Madame Martin,\nMerci pour votre réservation à l'Hôtel du Parc.\nVous arrivez le vendredi 12 juin et vous partez le dimanche 14 juin. Vous restez deux nuits.\nVotre chambre est une chambre double avec un grand lit. Le prix est de 80 euros par nuit, petit-déjeuner compris.\nL'arrivée est possible à partir de 15 heures. Le départ est avant 11 heures.\nLe parking est gratuit. Le wifi est gratuit aussi.\nÀ très bientôt ! La réception de l'Hôtel du Parc",
+textZh:"Martin 女士您好，\n感谢您预订公园酒店。\n您6月12日星期五入住，6月14日星期日离开，共住两晚。\n您的房间是双人间，有一张大床。每晚80欧元，含早餐。\n入住从15点开始，退房在11点之前。\n停车免费，wifi 也免费。\n期待您的到来！公园酒店前台",
+quiz:[
+{q:"Martin 女士住几晚？",opts:["一晚","两晚","三晚","四晚"],a:1,why:"Vous restez deux nuits（您住两晚），6月12日到14日。"},
+{q:"每晚房价是多少？",opts:["60 欧元","70 欧元","80 欧元","100 欧元"],a:2,why:"Le prix est de 80 euros par nuit（每晚80欧元）。"},
+{q:"房价包含什么？",opts:["早餐","午餐","晚餐","游泳池"],a:0,why:"Petit-déjeuner compris（包含早餐）。午餐、晚餐和游泳池短文里都没有提到。"},
+{q:"最早几点可以入住？",opts:["11 点","12 点","14 点","15 点"],a:3,why:"L'arrivée est possible à partir de 15 heures（15点起可以入住）。"}]},
+{id:"ami",icon:"✉️",fr:"Un e-mail de Sophie",zh:"朋友的邮件",lv:"A1",
+text:"Salut Marc !\nTu es libre samedi ? Je fais une petite fête à la maison pour mon anniversaire. J'ai 25 ans samedi !\nLa fête commence à 19 heures. Nous sommes dix personnes.\nNous mangeons une pizza et nous buvons du jus de fruits. Après, nous écoutons de la musique et nous dansons !\nTu peux venir avec ta sœur. Apporte seulement un dessert, s'il te plaît.\nMa maison est au 12 rue des Fleurs, près du parc.\nDis-moi si tu viens. À samedi !\nSophie",
+textZh:"嗨，Marc！\n你星期六有空吗？我在家办一个小派对，庆祝我的生日。星期六我就25岁了！\n派对19点开始，我们一共十个人。\n我们吃比萨，喝果汁。之后我们听音乐、跳舞！\n你可以带你妹妹一起来。只需要带一份甜点就好。\n我家在花街12号，公园附近。\n告诉我你来不来。星期六见！\nSophie",
+quiz:[
+{q:"Sophie 为什么办派对？",opts:["庆祝她的生日","庆祝她搬家","庆祝她找到工作","庆祝新年"],a:0,why:"Je fais une petite fête à la maison pour mon anniversaire（我在家办一个小派对庆祝我的生日）。"},
+{q:"派对几点开始？",opts:["18 点","19 点","20 点","21 点"],a:1,why:"La fête commence à 19 heures（派对19点开始）。"},
+{q:"Marc 需要带什么？",opts:["一份甜点","一个比萨","一瓶果汁","一份礼物"],a:0,why:"Apporte seulement un dessert, s'il te plaît（只需要带一份甜点）。"},
+{q:"派对在哪里举行？",opts:["在 Sophie 家，花街 12 号","在公园里","在餐厅","在 Marc 家"],a:0,why:"Ma maison est au 12 rue des Fleurs, près du parc（我家在花街12号，公园附近）。"}]},
+{id:"location",icon:"📋",fr:"Appartement à louer",zh:"租房小广告",lv:"A1",
+text:"Appartement à louer, dans le centre-ville, près de la gare.\nDeux pièces : un salon et une chambre. La cuisine est petite mais moderne. La salle de bains est neuve.\nL'appartement est meublé : il y a un lit, une table et des chaises.\nLe loyer est de 600 euros par mois. Les charges sont comprises.\nL'appartement est au deuxième étage, avec un ascenseur. Il y a un balcon avec une belle vue.\nIl est libre le premier septembre.\nPour visiter, téléphonez à Monsieur Dubois au 06 12 34 56 78.",
+textZh:"市中心公寓出租，火车站附近。\n两间房：一间客厅和一间卧室。厨房不大，但很现代。浴室是新的。\n公寓带家具：有一张床、一张桌子和几把椅子。\n月租600欧元，含杂费。\n公寓在二楼，有电梯。有一个阳台，景色很美。\n9月1日起可入住。\n想看房请致电 Dubois 先生：06 12 34 56 78。",
+quiz:[
+{q:"这套公寓有几间房？",opts:["一间","两间：一间客厅和一间卧室","三间","四间"],a:1,why:"Deux pièces : un salon et une chambre（两间房：一间客厅和一间卧室）。"},
+{q:"每月房租是多少？",opts:["500 欧元","600 欧元","700 欧元","800 欧元"],a:1,why:"Le loyer est de 600 euros par mois（月租600欧元）。"},
+{q:"公寓在几楼？",opts:["一楼","二楼","三楼","四楼"],a:1,why:"L'appartement est au deuxième étage（公寓在二楼）。"},
+{q:"想看房应该联系谁？",opts:["Dubois 先生，电话 06 12 34 56 78","去市政厅","去火车站","直接去公寓门口"],a:0,why:"Pour visiter, téléphonez à Monsieur Dubois au 06 12 34 56 78（想看房请致电 Dubois 先生）。"}]}
+];
+function readDone(){try{return ld("frs_read",{})}catch(e){return{}}}
+function readMenu(){
+  if(!scenVisible()){
+    show_("home");
+    $("home").innerHTML='<div class="card"><h3 style="margin:0 0 8px">📖 阅读理解</h3><p>阅读理解是日常法语方向的内容。切换到日常法语方向后，就可以在这里读短文、做练习了。</p><button class="btn" id="rdBack">返回练习发音</button></div>';
+    $("rdBack").onclick=()=>pronMenu();
+    return;
+  }
+  const done=readDone();
+  let h='<p class="sub">读一篇 A1 水平的小短文，再回答问题。像 DELF 阅读理解一样：先读懂，再选答案。点 🔊 可以听全文发音。</p>';
+  const fns=READ.map((s,i)=>()=>readView(i));
+  READ.forEach((s,i)=>{h+=mb(s.icon,s.fr+" · "+s.zh,s.lv+" · "+(done[s.id]?"✓ 已完成":"未完成"),i)});
+  sub("📖 阅读理解",h,fns);
+}
+function readView(i){
+  const s=READ[i]; if(!s) return readMenu();
+  show_("home");
+  let h='<button class="btn alt" id="rdBack" style="margin:0 0 10px">← 返回阅读理解</button>';
+  h+='<h3 style="margin:0 0 6px">'+esc(s.fr)+' · '+esc(s.zh)+'</h3><p class="sub">'+s.lv+' · A1 · DELF 风格</p>';
+  h+='<div class="card"><p style="margin:0;line-height:1.8;white-space:pre-line">'+esc(s.text)+'</p>';
+  h+='<div style="margin-top:12px"><button type="button" class="btn alt" id="rdListen" style="margin:0">🔊 听全文</button> <button type="button" class="btn alt" id="rdTrans" style="margin:0">显示中文翻译</button></div>';
+  h+='<p id="rdZh" class="sub" style="display:none;margin:12px 0 0;line-height:1.8;white-space:pre-line">'+esc(s.textZh)+'</p></div>';
+  h+='<button class="btn" id="rdQuiz">开始做题</button> <button class="btn alt" id="rdBack2" style="margin-left:0">返回阅读列表</button>';
+  $("home").innerHTML=h;
+  $("rdBack").onclick=()=>readMenu();
+  $("rdBack2").onclick=()=>readMenu();
+  $("rdQuiz").onclick=()=>readQuiz(i);
+  $("rdListen").onclick=()=>{try{say(s.text)}catch(e){}};
+  $("rdTrans").onclick=()=>{const z=$("rdZh");const show=z.style.display==="none";z.style.display=show?"":"none";$("rdTrans").textContent=show?"隐藏中文翻译":"显示中文翻译";};
+}
+let RQ=null;
+function readQuiz(i){
+  const s=READ[i]; if(!s) return readMenu();
+  RQ={i:i,qi:0,score:0};
+  show_("home");
+  readQuizRender();
+}
+function readQuizRender(){
+  const s=READ[RQ.i],q=s.quiz[RQ.qi];
+  if(!q){
+    const done=readDone(); done[s.id]=true; try{sv("frs_read",done)}catch(e){}
+    $("home").innerHTML='<div class="card"><h3 style="margin:0 0 8px">🎉 本篇阅读完成！</h3><p>答对 '+RQ.score+' / '+s.quiz.length+' 题</p><p class="sub">'+(RQ.score===s.quiz.length?"全对，太棒了！":RQ.score>=Math.ceil(s.quiz.length/2)?"不错，继续加油！":"没关系，再读一遍短文，回来再试一次。")+'</p><button class="btn" id="rqAgain">再读一遍</button> <button class="btn alt" id="rqBack" style="margin-left:0">返回阅读列表</button> <button class="btn alt" id="rqHome" style="margin-left:0">回首页</button></div>';
+    $("rqAgain").onclick=()=>readView(RQ.i);
+    $("rqBack").onclick=()=>readMenu();
+    $("rqHome").onclick=()=>home();
+    return;
+  }
+  let h='<div class="card"><p class="sub">第 '+(RQ.qi+1)+' / '+s.quiz.length+' 题 · '+esc(s.fr)+'</p><h3 style="margin:0 0 12px">'+esc(q.q)+'</h3>';
+  h+=q.opts.map((o,idx)=>'<div class="opt-row"><button class="opt" data-o="'+idx+'">'+esc(o)+'</button></div>').join("");
+  h+='<div id="rqWhy" style="margin-top:12px"></div><button class="btn alt" id="rqNext" style="display:none;margin-top:10px">下一题 ▶</button></div>';
+  h+='<button class="btn alt" id="rqExit" style="margin-top:14px">退出测验</button>';
+  $("home").innerHTML=h;
+  $("rqExit").onclick=()=>readView(RQ.i);
+  const opts=document.querySelectorAll("#home [data-o]");
+  opts.forEach(b=>{b.onclick=()=>{
+    if(b.disabled) return;
+    opts.forEach(x=>{x.disabled=true});
+    const pick=+b.dataset.o,ok=pick===q.a;
+    if(ok){b.style.background="#d9f2dd";try{if(typeof gain==="function")gain(10)}catch(e){}RQ.score++;}
+    else{b.style.background="#fbd9d9";const right=opts[q.a];if(right)right.style.background="#d9f2dd";try{if(typeof resetRightStreak==="function")resetRightStreak()}catch(e){}}
+    $("rqWhy").innerHTML='<p style="margin:0"><b>'+(ok?"答对了！+10 XP":"答错了")+'</b><br>'+esc(q.why)+'</p>';
+    const nx=$("rqNext");nx.style.display="";nx.onclick=()=>{RQ.qi++;readQuizRender();};
+  }});
+}
 
 </script>
 <style>
