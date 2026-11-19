@@ -2440,7 +2440,7 @@ function readView(i){
   const s=READ[i]; if(!s) return readMenu();
   show_("home");
   let h='<button class="btn alt" id="rdBack" style="margin:0 0 10px">← 返回阅读理解</button>';
-  h+='<h3 style="margin:0 0 6px">'+esc(s.fr)+' · '+esc(s.zh)+'</h3><p class="sub">'+s.lv+' · A1 · DELF 风格</p>';
+  h+='<h3 style="margin:0 0 6px">'+esc(s.fr)+' · '+esc(s.zh)+'</h3><p class="sub">'+s.lv+' · DELF 风格</p>';
   h+='<div class="card"><p style="margin:0;line-height:1.8;white-space:pre-line">'+esc(s.text)+'</p>';
   h+='<div style="margin-top:12px"><button type="button" class="btn alt" id="rdListen" style="margin:0">🔊 听全文</button> <button type="button" class="btn alt" id="rdTrans" style="margin:0">显示中文翻译</button></div>';
   h+='<p id="rdZh" class="sub" style="display:none;margin:12px 0 0;line-height:1.8;white-space:pre-line">'+esc(s.textZh)+'</p></div>';
